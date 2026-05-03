@@ -1,29 +1,29 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play } from 'lucide-react';
 
 const HeroSlider = () => {
   const slides = [
     {
-      category: "Indian Escapes",
-      headline: "Discover India, Create Memories",
-      cta: "Explore Now",
-      image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80&w=1920&fm=webp",
+      badge: "Trusted by 1000+ Travelers",
+      headline: <>Discover <span>India</span>,<br/>Create Memories</>,
+      sub: "Seamless, stress-free travel across India's most breathtaking destinations — curated just for you.",
+      image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=80",
       link: "/destinations?category=Indian Escapes"
     },
     {
-      category: "Overseas Adventures",
-      headline: "Explore Worlds, Lifetime Adventures",
-      cta: "Explore Now",
-      image: "https://images.unsplash.com/photo-1531210483974-4f8c1f33fd35?auto=format&fit=crop&q=80&w=1920&fm=webp",
+      badge: "Lifetime Adventures",
+      headline: <>Explore <span>Worlds</span>,<br/>Beyond Boundaries</>,
+      sub: "Experience the pinnacle of luxury and adventure in the world's most iconic destinations.",
+      image: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?auto=format&fit=crop&w=1920&q=80",
       link: "/destinations?category=Overseas Adventures"
     },
     {
-      category: "Divine Destinations",
-      headline: "Discover Spiritual Travel Bliss",
-      cta: "Explore Now",
-      image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80&w=1920&fm=webp",
+      badge: "Peace & Devotion",
+      headline: <>Divine <span>Peace</span>,<br/>For Your Soul</>,
+      sub: "Embark on a spiritual journey to the most sacred places across the Indian subcontinent.",
+      image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1920&q=80",
       link: "/destinations?category=Divine Destinations"
     }
   ];
@@ -31,50 +31,147 @@ const HeroSlider = () => {
   const [current, setCurrent] = useState(0);
 
   const nextSlide = () => setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-  const prevSlide = () => setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  const goSlide = (n) => setCurrent(n);
 
   useEffect(() => {
-    const timer = setInterval(nextSlide, 6000);
+    const timer = setInterval(nextSlide, 7000);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <section className="hero">
-      {slides.map((slide, index) => (
-        <div
-          key={index}
-          className="hero-slide"
-          style={{
-            backgroundImage: `url(${slide.image})`,
-            opacity: index === current ? 1 : 0,
-            transition: 'opacity 1s ease-in-out',
-            zIndex: index === current ? 1 : 0
-          }}
-        >
-          <div className="hero-overlay"></div>
-          <div className="container hero-content">
-            <p className="hero-category animate-fade" style={{ animationDelay: '0.2s' }}>{slide.category}</p>
-            <h1 className="hero-headline animate-fade" style={{ animationDelay: '0.4s' }}>{slide.headline}</h1>
-            <Link 
-              href={slide.link} 
-              className="btn btn-primary animate-fade" 
-              style={{ animationDelay: '0.6s', padding: '15px 40px', fontSize: '1.1rem' }}
-            >
-              {slide.cta}
-            </Link>
-          </div>
-        </div>
-      ))}
-
-      {/* Slider Controls */}
-      <div style={{ position: 'absolute', bottom: '30px', right: '50px', zIndex: 10, display: 'flex', gap: '15px' }}>
-        <button onClick={prevSlide} style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)' }}>
-          <ChevronLeft />
-        </button>
-        <button onClick={nextSlide} style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)' }}>
-          <ChevronRight />
-        </button>
+      <div className="hero-slides">
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`hero-slide ${index === current ? 'active' : ''}`}
+            style={{ backgroundImage: `url(${slide.image})` }}
+          />
+        ))}
       </div>
+
+      <div className="hero-content">
+        <div className="hero-badge fade-up" style={{ animationDelay: '0.1s' }}>
+          {slides[current].badge}
+        </div>
+        <h1 className="hero-title fade-up" style={{ animationDelay: '0.2s' }}>
+          {slides[current].headline}
+        </h1>
+        <p className="hero-sub fade-up" style={{ animationDelay: '0.3s' }}>
+          {slides[current].sub}
+        </p>
+        <div className="hero-actions fade-up" style={{ animationDelay: '0.4s' }}>
+          <Link href={slides[current].link} className="btn btn-primary">
+            ✦ Explore Packages
+          </Link>
+          <button className="btn-outline-white">
+            Watch Journey <Play size={16} fill="currentColor" />
+          </button>
+        </div>
+      </div>
+
+      <div className="hero-dots">
+        {slides.map((_, index) => (
+          <button 
+            key={index} 
+            className={`hero-dot ${index === current ? 'active' : ''}`} 
+            onClick={() => goSlide(index)}
+          />
+        ))}
+      </div>
+
+      <div className="scroll-hint">
+        <div className="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+
+      <style jsx>{`
+        .hero {
+          position: relative; height: 100vh; min-height: 600px;
+          display: flex; align-items: center; overflow: hidden;
+        }
+        .hero-slides { position: absolute; inset: 0; }
+        .hero-slide {
+          position: absolute; inset: 0;
+          background-size: cover; background-position: center;
+          opacity: 0; transition: opacity 1.5s ease;
+        }
+        .hero-slide.active { opacity: 1; }
+        .hero-slide::after {
+          content: ''; position: absolute; inset: 0;
+          background: linear-gradient(135deg, rgba(13,27,42,0.85) 0%, rgba(13,27,42,0.4) 60%, transparent 100%);
+        }
+        
+        .hero-content {
+          position: relative; z-index: 2;
+          padding: 0 5vw; width: 100%; max-width: 800px;
+        }
+        .hero-badge {
+          display: inline-flex; align-items: center; gap: 8px;
+          background: rgba(232, 160, 32, 0.18); border: 1px solid rgba(232, 160, 32, 0.4);
+          color: var(--primary-light); font-size: 0.8rem; font-weight: 600;
+          letter-spacing: 0.08em; text-transform: uppercase;
+          padding: 6px 16px; border-radius: 20px; margin-bottom: 25px;
+          backdrop-filter: blur(8px);
+        }
+        .hero-title {
+          font-family: var(--font-display);
+          font-size: clamp(2.5rem, 6vw, 4.5rem);
+          font-weight: 700; line-height: 1.1; color: #fff;
+          margin-bottom: 20px;
+        }
+        .hero-title :global(span) { color: var(--primary-color); }
+        .hero-sub {
+          font-size: 1.1rem; color: rgba(255, 255, 255, 0.75);
+          line-height: 1.7; max-width: 520px; margin-bottom: 35px;
+        }
+        .hero-actions { display: flex; gap: 15px; flex-wrap: wrap; }
+        
+        .btn-outline-white {
+          background: transparent; color: #fff;
+          font-weight: 600; font-size: 0.95rem;
+          padding: 13px 28px; border-radius: var(--radius-sm);
+          border: 1.5px solid rgba(255,255,255,0.4); cursor: pointer;
+          display: inline-flex; align-items: center; gap: 10px;
+          transition: var(--transition); backdrop-filter: blur(4px);
+        }
+        .btn-outline-white:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+        .hero-dots {
+          position: absolute; bottom: 40px; left: 5vw;
+          display: flex; gap: 10px; z-index: 2;
+        }
+        .hero-dot {
+          width: 10px; height: 10px; border-radius: 5px;
+          background: rgba(255,255,255,0.3); border: none; cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .hero-dot.active { width: 35px; background: var(--primary-color); }
+
+        .scroll-hint {
+          position: absolute; bottom: 40px; right: 5vw; z-index: 2;
+          display: flex; flex-direction: column; align-items: center; gap: 8px;
+          color: rgba(255,255,255,0.5); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .scroll-line {
+          width: 1px; height: 50px; background: rgba(255,255,255,0.2);
+          position: relative; overflow: hidden;
+        }
+        .scroll-line::after {
+          content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%;
+          background: var(--primary-color); animation: scrollLine 2s infinite;
+        }
+        @keyframes scrollLine {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(200%); }
+        }
+
+        @media (max-width: 768px) {
+          .hero-content { text-align: left; }
+          .hero-actions { flex-direction: column; width: 100%; }
+          .hero-actions > :global(a), .hero-actions > button { width: 100%; justify-content: center; }
+        }
+      `}</style>
     </section>
   );
 };
