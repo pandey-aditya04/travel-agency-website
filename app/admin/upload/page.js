@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import AdminNavbar from '@/components/AdminNavbar';
 import Footer from '@/components/Footer';
 import { supabase } from '@/lib/supabase';
 import { Upload, Check, Info, List, Settings, Image as ImageIcon, Eye, Plus, Trash2, MapPin } from 'lucide-react';
@@ -287,12 +287,12 @@ function UploadTripContent() {
   };
 
   return (
-    <main>
-      <Navbar />
-      <div className="container" style={{ padding: '60px 20px 100px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '3fr 1.5fr', gap: '50px' }}>
+    <main style={{ background: '#F8F9FA', minHeight: '100vh' }}>
+      <AdminNavbar />
+      <div className="container" style={{ padding: '40px 20px 100px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '40px', alignItems: 'start' }}>
           {/* Wizard Area */}
-          <div style={{ background: '#fff', padding: '40px', borderRadius: '20px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ background: '#fff', padding: '40px', borderRadius: '30px', boxShadow: '0 20px 50px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
             <h1 style={{ marginBottom: '20px' }}>{isEdit ? 'Edit Trip Package' : 'Create New Trip Package'}</h1>
             <div className="stepper">
               {[1, 2, 3, 4].map(s => (

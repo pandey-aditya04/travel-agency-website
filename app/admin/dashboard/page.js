@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
+import AdminNavbar from '@/components/AdminNavbar';
 import Footer from '@/components/Footer';
 import { supabase } from '@/lib/supabase';
 import { 
@@ -67,9 +67,9 @@ export default function AdminDashboard() {
   };
 
   return (
-    <main>
-      <Navbar />
-      <div className="container" style={{ padding: '60px 20px 100px' }}>
+    <main style={{ background: '#F8F9FA', minHeight: '100vh' }}>
+      <AdminNavbar />
+      <div className="container" style={{ padding: '40px 20px 100px' }}>
         <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', flexWrap: 'wrap', gap: '20px' }}>
           <div>
             <h1 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)' }}>Master Admin Panel</h1>
