@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HeroSlider from '@/components/HeroSlider';
@@ -9,24 +10,25 @@ import { supabase } from '@/lib/supabase';
 import { Map, Headphones, Wallet, ShieldCheck, CheckCircle, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
-export const revalidate = 3600;
+export default function Home() {
+  const [featuredPackages, setFeaturedPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-async function getPackages() {
-  const { data: packages, error } = await supabase
-    .from('packages')
-    .select('*')
-    .eq('status', 'Published')
-    .eq('featured', true);
-  
-  if (error) {
-    console.error('Error fetching packages:', error);
-    return [];
-  }
-  return packages;
-}
-
-export default async function Home() {
-  const featuredPackages = await getPackages();
+  useEffect(() => {
+    async function fetchPackages() {
+      const { data, error } = await supabase
+        .from('packages')
+        .select('*')
+        .eq('status', 'Published')
+        .eq('featured', true);
+      
+      if (!error && data) {
+        setFeaturedPackages(data);
+      }
+      setLoading(false);
+    }
+    fetchPackages();
+  }, []);
 
   const indianEscapes = featuredPackages.filter(p => p.category === 'Indian Escapes');
   const overseasAdventures = featuredPackages.filter(p => p.category === 'Overseas Adventures');
@@ -48,7 +50,9 @@ export default async function Home() {
           </div>
           <Link href="/destinations?category=Indian Escapes" className="view-all-btn">View All</Link>
         </div>
-        {indianEscapes.length > 0 ? (
+        {loading ? (
+          <div className="empty-state">Loading packages...</div>
+        ) : indianEscapes.length > 0 ? (
           <div className="grid">
             {indianEscapes.map(pkg => <TripCard key={pkg.id} pkg={pkg} />)}
           </div>
@@ -84,7 +88,9 @@ export default async function Home() {
           </div>
           <Link href="/destinations?category=Overseas Adventures" className="view-all-btn">View All</Link>
         </div>
-        {overseasAdventures.length > 0 ? (
+        {loading ? (
+          <div className="empty-state">Loading packages...</div>
+        ) : overseasAdventures.length > 0 ? (
           <div className="grid">
             {overseasAdventures.map(pkg => <TripCard key={pkg.id} pkg={pkg} />)}
           </div>
@@ -120,7 +126,9 @@ export default async function Home() {
           </div>
           <Link href="/destinations?category=Divine Destinations" className="view-all-btn">View All</Link>
         </div>
-        {divineDestinations.length > 0 ? (
+        {loading ? (
+          <div className="empty-state">Loading packages...</div>
+        ) : divineDestinations.length > 0 ? (
           <div className="grid">
             {divineDestinations.map(pkg => <TripCard key={pkg.id} pkg={pkg} />)}
           </div>
@@ -199,7 +207,6 @@ export default async function Home() {
       </div>
 
       <Footer />
-
-      </main>
+    </main>
   );
 }
