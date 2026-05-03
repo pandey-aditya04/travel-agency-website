@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import TripCard from '@/components/TripCard';
+import SkeletonCard from '@/components/SkeletonCard';
 import { supabase } from '@/lib/supabase';
 import { Filter, Search as SearchIcon } from 'lucide-react';
 
@@ -124,8 +125,8 @@ function DestinationsContent() {
       {/* Results */}
       <section className="container" style={{ padding: '40px 20px 100px' }}>
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '100px 0' }}>
-            <div className="loader">Loading...</div>
+          <div className="grid">
+            {[1, 2, 3, 4, 5, 6].map(i => <SkeletonCard key={i} />)}
           </div>
         ) : filteredPackages.length > 0 ? (
           <div className="grid">
