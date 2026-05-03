@@ -64,6 +64,33 @@ export default function NewPackagePage() {
     setItinerary(newItinerary);
   };
 
+  const uploadImage = async (file) => {
+    const form = new FormData();
+    form.append('file', file);
+    form.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+      method: 'POST', body: form
+    });
+    const data = await res.json();
+    return data.secure_url;
+  };
+
+  const handleFileChange = async (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    try {
+      const url = await uploadImage(file);
+      if (type === 'cover') {
+        setImages({ ...images, cover_image_url: url });
+      } else {
+        setImages({ ...images, gallery_urls: [...images.gallery_urls, url] });
+      }
+    } catch (err) {
+      alert('Upload failed: ' + err.message);
+    }
+  };
+
   const handleSave = async () => {
     setIsSubmitting(true);
     const fullPackage = {
@@ -162,28 +189,34 @@ export default function NewPackagePage() {
               <h2>Step 2: Media & Gallery</h2>
               <div className="image-upload-zone">
                 <div className="f-group full">
-                  <label>Cover Image URL (16:9 recommended)</label>
-                  <div className="url-input-wrap">
-                    <input value={images.cover_image_url} onChange={e => setImages({...images, cover_image_url: e.target.value})} placeholder="https://..." />
-                    <button className="preview-btn">Preview</button>
+                  <label>Cover / Thumbnail Image (16:9 landscape)</label>
+                  <div className="upload-btn-wrap">
+                    <input type="file" onChange={e => handleFileChange(e, 'cover')} accept="image/*" id="cover-upload" hidden />
+                    <label htmlFor="cover-upload" className="upload-trigger">
+                      <ImageIcon size={20} /> {images.cover_image_url ? 'Change Image' : 'Select Cover Photo'}
+                    </label>
+                    {images.cover_image_url && <div className="upload-preview"><img src={images.cover_image_url} alt="Cover" /></div>}
                   </div>
                 </div>
+                
                 <div className="f-group full">
-                  <label>Gallery Images (Add URLs)</label>
-                  <div className="gallery-inputs">
+                  <label>Gallery Photos (Add multiple)</label>
+                  <div className="gallery-upload-grid">
                     {images.gallery_urls.map((url, i) => (
-                      <div key={i} className="gallery-url-row">
-                        <input value={url} onChange={e => {
-                          const newUrls = [...images.gallery_urls];
-                          newUrls[i] = e.target.value;
-                          setImages({...images, gallery_urls: newUrls});
-                        }} />
-                        <button onClick={() => setImages({...images, gallery_urls: images.gallery_urls.filter((_, idx) => idx !== i)})}><Trash2 size={16} /></button>
+                      <div key={i} className="gallery-preview-card">
+                        <img src={url} alt="Gallery" />
+                        <button onClick={() => setImages({...images, gallery_urls: images.gallery_urls.filter((_, idx) => idx !== i)})} className="remove-img">
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     ))}
-                    <button className="add-btn" onClick={() => setImages({...images, gallery_urls: [...images.gallery_urls, '']})}>
-                      <Plus size={16} /> Add Photo
-                    </button>
+                    <div className="gallery-add-card">
+                      <input type="file" onChange={e => handleFileChange(e, 'gallery')} accept="image/*" id="gallery-upload" hidden />
+                      <label htmlFor="gallery-upload">
+                        <Plus size={24} />
+                        <span>Add Photo</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -309,8 +342,24 @@ export default function NewPackagePage() {
         .back-btn { background: none; border: none; font-weight: 700; color: var(--slate); cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .next-btn { background: var(--navy); color: #fff; padding: 12px 30px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         
+        .image-upload-zone { display: flex; flex-direction: column; gap: 30px; }
+        .upload-btn-wrap { display: flex; align-items: center; gap: 20px; }
+        .upload-trigger { background: #F3F4F6; border: 2px dashed var(--border); padding: 15px 25px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--slate); transition: 0.3s; }
+        .upload-trigger:hover { border-color: var(--amber); color: var(--amber); background: #fff; }
+        .upload-preview { width: 120px; height: 67px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+        .upload-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+        .gallery-upload-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-top: 10px; }
+        .gallery-preview-card { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+        .gallery-preview-card img { width: 100%; height: 100%; object-fit: cover; }
+        .remove-img { position: absolute; top: 5px; right: 5px; background: rgba(239, 68, 68, 0.9); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        .gallery-add-card label { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #F9FAFB; border: 2px dashed var(--border); border-radius: 12px; cursor: pointer; transition: 0.3s; padding: 20px 0; }
+        .gallery-add-card label:hover { border-color: var(--amber); background: #fff; }
+        .gallery-add-card span { font-size: 0.75rem; font-weight: 700; color: var(--slate); margin-top: 5px; }
+
         .publish-now { background: var(--amber); color: var(--navy); padding: 15px 40px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
       `}</style>
-    </div>
-  );
+      </main>
+    );
 }

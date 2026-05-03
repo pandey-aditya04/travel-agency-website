@@ -229,6 +229,6 @@ export default function AdminLeadsPage() {
           .dash-header { flex-direction: column; align-items: flex-start; gap: 20px; }
         }
       `}</style>
-    </div>
-  );
+      </main>
+    );
 }

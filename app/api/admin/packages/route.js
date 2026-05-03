@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export async function POST(request) {
@@ -8,7 +8,7 @@ export async function POST(request) {
     
     // Auth check: Use a custom secret or verify JWT
     // For now, we assume the user has the secret role key in env
-    const supabase = createClient(
+    const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY,
       {

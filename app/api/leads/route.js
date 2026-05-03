@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { Resend } from 'resend';
 import { cookies } from 'next/headers';
 
@@ -21,7 +21,7 @@ export async function POST(request) {
 
     // 1. Initialize Supabase with Service Role Key for Admin privileges
     const cookieStore = await cookies();
-    const supabase = createClient(
+    const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY,
       {
