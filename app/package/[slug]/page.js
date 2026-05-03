@@ -182,12 +182,29 @@ export default function PackageDetail({ params }) {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                 <label style={{ fontSize: '0.85rem', color: '#ccc' }}>Phone Number</label>
-                <input type="tel" name="customer_phone" value={bookingData.customer_phone} onChange={handleInputChange} required style={{ padding: '12px', borderRadius: '8px', border: 'none', background: '#252545', color: '#fff' }} />
+                <input 
+                  type="tel" 
+                  name="customer_phone" 
+                  value={bookingData.customer_phone} 
+                  onChange={handleInputChange} 
+                  required 
+                  pattern="[0-9]{10}"
+                  title="Please enter a valid 10-digit phone number"
+                  style={{ padding: '12px', borderRadius: '8px', border: 'none', background: '#252545', color: '#fff' }} 
+                />
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                 <label style={{ fontSize: '0.85rem', color: '#ccc' }}>Travel Date</label>
-                <input type="date" name="travel_date" value={bookingData.travel_date} onChange={handleInputChange} required style={{ padding: '12px', borderRadius: '8px', border: 'none', background: '#252545', color: '#fff' }} />
+                <input 
+                  type="date" 
+                  name="travel_date" 
+                  value={bookingData.travel_date} 
+                  onChange={handleInputChange} 
+                  required 
+                  min={new Date().toISOString().split('T')[0]}
+                  style={{ padding: '12px', borderRadius: '8px', border: 'none', background: '#252545', color: '#fff' }} 
+                />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>

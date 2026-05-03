@@ -56,19 +56,42 @@ const Navbar = () => {
         <button className="mobile-toggle" onClick={() => setIsOpen(!isOpen)} style={{ display: 'none' }}>
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
+
+        {/* Mobile Menu Overlay */}
+        {isOpen && (
+          <div style={{ 
+            position: 'fixed', top: '80px', left: 0, right: 0, bottom: 0, background: '#fff', 
+            zIndex: 1000, padding: '40px 20px', display: 'flex', flexDirection: 'column', gap: '20px'
+          }}>
+            <Link href="/destinations" className="nav-link" onClick={() => setIsOpen(false)} style={{ fontSize: '1.2rem', fontWeight: '700' }}>Explore Now</Link>
+            <Link href="/dashboard" className="nav-link" onClick={() => setIsOpen(false)} style={{ fontSize: '1.2rem', fontWeight: '700' }}>My Account</Link>
+            <Link href="/blog" className="nav-link" onClick={() => setIsOpen(false)} style={{ fontSize: '1.2rem', fontWeight: '700' }}>Tips & Tales</Link>
+            <Link href="/contact" className="nav-link" onClick={() => setIsOpen(false)} style={{ fontSize: '1.2rem', fontWeight: '700' }}>Reach Us</Link>
+            <Link href="/destinations" className="btn btn-primary" onClick={() => setIsOpen(false)} style={{ textAlign: 'center', padding: '15px' }}>Book A Trip</Link>
+          </div>
+        )}
       </div>
 
       <style jsx>{`
         .nav-container {
           background: #fff;
           border-bottom: 1px solid #f0f0f0;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          position: sticky;
+          top: 0;
+          z-index: 1001;
         }
-        @media (max-width: 1024px) {
+        @media (max-width: 1150px) {
           .nav-links {
             display: none;
           }
           .mobile-toggle {
             display: block !important;
+            background: none;
+            border: none;
+            color: #1a1a2e;
           }
         }
       `}</style>

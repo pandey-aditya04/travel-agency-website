@@ -26,18 +26,24 @@ function DestinationsContent() {
 
   const fetchPackages = async () => {
     setLoading(true);
-    let query = supabase
-      .from('packages')
-      .select('*')
-      .eq('status', 'Published');
+    try {
+      let query = supabase.from('packages').select('*');
+      
+      // Filter by published status
+      query = query.eq('status', 'Published');
 
-    if (filter !== 'All') {
-      query = query.eq('category', filter);
+      if (filter !== 'All') {
+        query = query.eq('category', filter);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      setPackages(data || []);
+    } catch (err) {
+      console.error('Error fetching packages:', err);
+    } finally {
+      setLoading(false);
     }
-
-    const { data, error } = await query;
-    if (!error) setPackages(data);
-    setLoading(false);
   };
 
   const filteredPackages = packages.filter(pkg => 

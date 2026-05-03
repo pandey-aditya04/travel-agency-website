@@ -449,6 +449,18 @@ function UploadTripContent() {
         .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 20px; }
         .price { font-weight: 900; font-size: 1.5rem; color: var(--secondary-color); }
         .days { font-size: 0.9rem; font-weight: 600; color: #888; }
+        @media (max-width: 1024px) {
+          .wizard-container { grid-template-columns: 1fr; }
+          .card-preview-sticky { position: relative; top: 0; margin-top: 40px; }
+        }
+        @media (max-width: 768px) {
+          .form-grid { grid-template-columns: 1fr; }
+          .full-width { grid-column: span 1; }
+          .step-title { font-size: 1.5rem; }
+          .wizard-header { padding: 40px 20px; }
+          .wizard-steps { gap: 10px; }
+          .step-label { display: none; }
+        }
       `}</style>
       <Footer />
     </main>
