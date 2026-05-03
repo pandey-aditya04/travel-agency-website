@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -11,33 +11,55 @@ import {
 } from 'lucide-react';
 
 export default function PackagePage({ params }) {
+  const resolvedParams = use(params);
+  const slug = resolvedParams.slug;
+  
   const [pkg, setPkg] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  if (typeof window !== 'undefined' && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    console.warn('CRITICAL: NEXT_PUBLIC_SUPABASE_URL is missing! Check your Vercel/Local env vars.');
+  }
   const [activeDay, setActiveDay] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [leadStatus, setLeadStatus] = useState('idle'); // idle, loading, success, error
 
   useEffect(() => {
     async function fetchPkg() {
-      const { data, error } = await supabase
-        .from('packages')
-        .select('*')
-        .eq('slug', params.slug)
-        .eq('status', 'published')
-        .single();
+      if (!slug) return;
+      console.log('Fetching package for identifier:', slug);
+      
+      let query = supabase.from('packages').select('*');
+      
+      // Check if slug is a UUID
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+      
+      if (isUUID) {
+        query = query.eq('id', slug);
+      } else {
+        query = query.eq('slug', slug);
+      }
+
+      const { data, error } = await query.single();
       
       if (error || !data) {
+        console.error('Fetch error:', error);
         setPkg(null);
       } else {
+        console.log('Package loaded:', data.title);
         setPkg(data);
       }
       setLoading(false);
     }
     fetchPkg();
-  }, [params.slug]);
+  }, [slug]);
 
   if (loading) return <div className="loading-state">Loading your journey...</div>;
   if (!pkg) return notFound();
+
+  const scrollToForm = () => {
+    document.querySelector('.sidebar')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleEnquiry = async (e) => {
     e.preventDefault();
@@ -45,21 +67,18 @@ export default function PackagePage({ params }) {
     
     const formData = new FormData(e.target);
     const data = {
-      full_name: formData.get('full_name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
+      customer_name: formData.get('full_name'),
+      customer_email: formData.get('email'),
+      customer_phone: formData.get('phone'),
       travel_date: formData.get('travel_date'),
-      adults: parseInt(formData.get('adults')),
-      children: parseInt(formData.get('children')),
-      budget: formData.get('budget'),
-      special_requests: formData.get('special_requests'),
+      travelers_count: parseInt(formData.get('travelers')),
+      message: formData.get('special_requests'),
       package_id: pkg.id,
-      package_title: pkg.title,
-      package_price: pkg.price
+      package_title: pkg.title
     };
 
     try {
-      const res = await fetch('/api/leads', {
+      const res = await fetch('/api/inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -97,8 +116,8 @@ export default function PackagePage({ params }) {
             <span className="label">Starts from</span>
             <div className="price">
               <IndianRupee size={20} /> 
-              <span>{pkg.price.toLocaleString()}</span>
-              {pkg.original_price && <del>₹{pkg.original_price.toLocaleString()}</del>}
+              <span>{pkg.price_inr?.toLocaleString()}</span>
+              {pkg.original_price_inr && <del>₹{pkg.original_price_inr.toLocaleString()}</del>}
             </div>
           </div>
           <div className="features-desktop">
@@ -106,7 +125,7 @@ export default function PackagePage({ params }) {
             <div className="feature"><Users size={18} /> Small Groups</div>
             <div className="feature"><ShieldCheck size={18} /> Verified Stay</div>
           </div>
-          <button className="cta-btn" onClick={() => setShowModal(true)}>
+          <button className="cta-btn" onClick={scrollToForm}>
             I'm Interested ✦
           </button>
         </div>
@@ -192,69 +211,49 @@ export default function PackagePage({ params }) {
           </section>
         </div>
 
-        {/* Sidebar / Desktop Pricing */}
+        {/* Sidebar / Inline Booking Form */}
         <aside className="sidebar">
-          <div className="pricing-card">
-            <h3>Plan Your Trip</h3>
-            <p>Our travel experts are ready to customize this package for you.</p>
-            <div className="sidebar-features">
+          <div className="booking-sidebar-card">
+            <div className="booking-header">
+              <h3>Plan Your Trip</h3>
+              <p>Our travel experts are ready to customize this package for you.</p>
+            </div>
+            
+            {leadStatus === 'success' ? (
+              <div className="success-ui-inline">
+                <div className="success-icon">✅</div>
+                <h4>Enquiry Sent!</h4>
+                <p>We'll contact you within 2 hours.</p>
+                <button className="btn btn-primary" onClick={() => setLeadStatus('idle')}>Send Another</button>
+              </div>
+            ) : (
+              <form onSubmit={handleEnquiry} className="sidebar-form">
+                <div className="f-group"><label>Full Name</label><input name="full_name" required placeholder="Ravi Kumar" /></div>
+                <div className="f-group"><label>WhatsApp Number</label><input name="phone" type="tel" required placeholder="+91 98765 43210" /></div>
+                <div className="f-group"><label>Email Address</label><input name="email" type="email" required placeholder="ravi@example.com" /></div>
+                <div className="f-group"><label>Travel Date</label><input name="travel_date" type="date" required /></div>
+                <div className="f-group"><label>Number of Travelers</label><input name="travelers" type="number" defaultValue="2" min="1" /></div>
+                <div className="f-group"><label>Special Requests</label><textarea name="special_requests" placeholder="Honeymoon, dietary needs, etc."></textarea></div>
+                
+                <button type="submit" className="submit-btn-sidebar" disabled={leadStatus === 'loading'}>
+                  {leadStatus === 'loading' ? 'Sending...' : 'Request Free Quote →'}
+                </button>
+                {leadStatus === 'error' && <p className="error-msg">Failed. Try again.</p>}
+              </form>
+            )}
+
+            <div className="sidebar-trust">
               <div className="s-feature"><ShieldCheck size={16} /> 100% Safe Payments</div>
               <div className="s-feature"><MessageSquare size={16} /> 24/7 Local Support</div>
             </div>
-            <button className="sidebar-cta" onClick={() => setShowModal(true)}>Book Now</button>
           </div>
         </aside>
       </div>
 
-      {/* Lead Capture Modal */}
-      {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal-card">
-            <button className="close-btn" onClick={() => setShowModal(false)}><X size={24} /></button>
-            {leadStatus === 'success' ? (
-              <div className="success-ui">
-                <div className="success-icon">✅</div>
-                <h2>Enquiry Sent!</h2>
-                <p>Our travel experts will call you within 2 hours to discuss your plan.</p>
-                <button className="btn btn-primary" onClick={() => setShowModal(false)}>Awesome!</button>
-              </div>
-            ) : (
-              <div className="modal-form-wrap">
-                <h2>Let's Plan Your Trip</h2>
-                <p className="subtitle">Filling this for: <strong>{pkg.title}</strong></p>
-                <form onSubmit={handleEnquiry} className="lead-form">
-                  <div className="form-grid">
-                    <div className="f-group"><label>Full Name</label><input name="full_name" required placeholder="Ravi Kumar" /></div>
-                    <div className="f-group"><label>WhatsApp Number</label><input name="phone" type="tel" required placeholder="+91 98765 43210" /></div>
-                    <div className="f-group"><label>Email Address</label><input name="email" type="email" required placeholder="ravi@example.com" /></div>
-                    <div className="f-group"><label>Travel Date</label><input name="travel_date" type="date" required /></div>
-                    <div className="f-group"><label>Adults</label><input name="adults" type="number" defaultValue="2" min="1" /></div>
-                    <div className="f-group"><label>Children</label><input name="children" type="number" defaultValue="0" min="0" /></div>
-                    <div className="f-group full"><label>Budget Range</label>
-                      <select name="budget">
-                        <option>Under ₹15,000</option>
-                        <option>₹15,000–₹30,000</option>
-                        <option>₹30,000–₹60,000</option>
-                        <option>Above ₹1,00,000</option>
-                      </select>
-                    </div>
-                    <div className="f-group full"><label>Special Requests</label><textarea name="special_requests" placeholder="Honeymoon, dietary needs, etc."></textarea></div>
-                  </div>
-                  <button type="submit" className="submit-btn" disabled={leadStatus === 'loading'}>
-                    {leadStatus === 'loading' ? 'Sending...' : 'Send My Enquiry →'}
-                  </button>
-                  {leadStatus === 'error' && <p className="error-msg">Something went wrong. Please try again.</p>}
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Sticky Mobile CTA */}
       <div className="mobile-cta-bar">
-        <div className="m-price">₹{pkg.price.toLocaleString()} <span>/ person</span></div>
-        <button className="m-btn" onClick={() => setShowModal(true)}>Book Now</button>
+        <div className="m-price">₹{pkg.price_inr?.toLocaleString()} <span>/ person</span></div>
+        <button className="m-btn" onClick={scrollToForm}>Book Now</button>
       </div>
 
       <Footer />
@@ -320,29 +319,31 @@ export default function PackagePage({ params }) {
         .card ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
         .card li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; line-height: 1.4; color: var(--text); }
 
-        /* Sidebar */
-        .sidebar { position: sticky; top: 170px; height: fit-content; }
-        .pricing-card { background: var(--navy); color: #fff; padding: 32px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
-        .pricing-card h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 10px; }
-        .pricing-card p { color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.6; margin-bottom: 25px; }
-        .sidebar-features { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
-        .s-feature { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--amber); font-weight: 600; }
-        .sidebar-cta { width: 100%; background: var(--amber); color: var(--navy); border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        /* Sidebar Booking Card */
+        .sidebar { position: sticky; top: 100px; height: fit-content; z-index: 10; }
+        .booking-sidebar-card { background: #fff; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.08); }
+        .booking-header { background: var(--navy); color: #fff; padding: 25px; text-align: center; }
+        .booking-header h3 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 8px; }
+        .booking-header p { font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.5; }
+        
+        .sidebar-form { padding: 25px; display: flex; flex-direction: column; gap: 15px; }
+        .success-ui-inline { padding: 40px 25px; text-align: center; }
+        .success-ui-inline .success-icon { font-size: 3rem; margin-bottom: 15px; }
+        .success-ui-inline h4 { font-size: 1.2rem; margin-bottom: 10px; color: var(--navy); }
+        .success-ui-inline p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
 
-        /* Modal */
-        .modal-backdrop { position: fixed; inset: 0; background: rgba(13,27,42,0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: #fff; width: 100%; max-width: 600px; border-radius: 20px; padding: 40px; position: relative; max-height: 90vh; overflow-y: auto; }
-        .close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--slate); cursor: pointer; }
-        .modal-form-wrap h2 { font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 5px; }
-        .subtitle { color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .f-group.full { grid-column: span 2; }
-        .f-group label { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--slate); margin-bottom: 8px; }
-        .f-group input, .f-group select, .f-group textarea { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; font-size: 0.95rem; }
-        .f-group textarea { height: 80px; resize: none; }
-        .submit-btn { width: 100%; background: var(--amber); color: var(--navy); border: none; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 1rem; margin-top: 30px; cursor: pointer; }
-        .success-ui { text-align: center; padding: 20px; }
-        .success-icon { font-size: 4rem; margin-bottom: 20px; }
+        .submit-btn-sidebar { background: var(--amber); color: var(--navy); border: none; padding: 15px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .submit-btn-sidebar:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(232,160,32,0.4); }
+        
+        .sidebar-trust { padding: 20px 25px; background: #F9FAFB; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+        .s-feature { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--slate); font-weight: 600; }
+        
+        .f-group label { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--slate); margin-bottom: 6px; }
+        .f-group input, .f-group textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; font-size: 0.9rem; transition: 0.3s; }
+        .f-group input:focus, .f-group textarea:focus { border-color: var(--amber); }
+        .f-group textarea { height: 70px; resize: none; }
+
+        .error-msg { color: #EF4444; font-size: 0.8rem; text-align: center; margin-top: 10px; font-weight: 600; }
 
         /* Mobile Bar */
         .mobile-cta-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 15px 5vw; border-top: 1px solid var(--border); z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); justify-content: space-between; align-items: center; }

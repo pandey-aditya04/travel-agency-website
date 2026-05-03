@@ -1,4 +1,4 @@
-'use client';
+import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Star, Clock, ChevronRight } from 'lucide-react';
 
@@ -19,10 +19,12 @@ const TripCard = ({ pkg }) => {
     <Link href={`/package/${slug || pkg.id}`} className="trip-card-link">
       <div className="trip-card">
         <div className="card-img-wrap">
-          <img 
+          <Image 
             src={cover_image_url || 'https://via.placeholder.com/600x400?text=RM+Yaatra+Travels'} 
             alt={title} 
-            loading="lazy"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="card-image"
           />
           {discount_badge ? (
             <span className="card-badge">{discount_badge}</span>
@@ -43,7 +45,7 @@ const TripCard = ({ pkg }) => {
           
           <div className="card-footer">
             <div className="card-price">
-              <strong>₹{price_inr.toLocaleString()}</strong>
+              <strong>₹{price_inr?.toLocaleString() || 'N/A'}</strong>
               {original_price_inr && <del>₹{original_price_inr.toLocaleString()}</del>}
             </div>
             <span className="card-duration">
@@ -56,7 +58,6 @@ const TripCard = ({ pkg }) => {
           </button>
         </div>
       </div>
-
     </Link>
   );
 };

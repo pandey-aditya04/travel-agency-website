@@ -20,12 +20,12 @@ export default function NewPackagePage() {
     category: 'Indian Escapes',
     destination: '',
     duration_days: 5,
-    price: '',
-    original_price: '',
+    price_inr: '',
+    original_price_inr: '',
     short_description: '',
     discount_badge: '',
     featured: false,
-    status: 'published'
+    status: 'Published'
   });
 
   const [images, setImages] = useState({
@@ -169,11 +169,11 @@ export default function NewPackagePage() {
                 </div>
                 <div className="f-group">
                   <label>Selling Price (₹)</label>
-                  <input type="number" value={basicInfo.price} onChange={e => setBasicInfo({...basicInfo, price: e.target.value})} placeholder="24999" />
+                  <input type="number" value={basicInfo.price_inr} onChange={e => setBasicInfo({...basicInfo, price_inr: e.target.value})} placeholder="24999" />
                 </div>
                 <div className="f-group">
                   <label>Original Price (₹)</label>
-                  <input type="number" value={basicInfo.original_price} onChange={e => setBasicInfo({...basicInfo, original_price: e.target.value})} placeholder="29999" />
+                  <input type="number" value={basicInfo.original_price_inr} onChange={e => setBasicInfo({...basicInfo, original_price_inr: e.target.value})} placeholder="29999" />
                 </div>
                 <div className="f-group full">
                   <label>Short Description</label>
@@ -280,7 +280,7 @@ export default function NewPackagePage() {
               <div className="final-review">
                 <div className="review-item"><strong>Title:</strong> {basicInfo.title}</div>
                 <div className="review-item"><strong>Slug:</strong> {basicInfo.slug}</div>
-                <div className="review-item"><strong>Price:</strong> ₹{basicInfo.price}</div>
+                <div className="review-item"><strong>Price:</strong> ₹{basicInfo.price_inr}</div>
                 <div className="review-item"><strong>Itinerary:</strong> {itinerary.length} Days planned</div>
               </div>
               <div className="publish-actions">

@@ -19,10 +19,13 @@ export async function POST(req) {
 
   try {
     const { adminId, masterKey } = await req.json();
-    const envAdminId = process.env.ADMIN_ID;
-    const envMasterKey = process.env.ADMIN_MASTER_KEY;
+    const envAdminId = process.env.ADMIN_ID?.trim();
+    const envMasterKey = process.env.ADMIN_MASTER_KEY?.trim();
 
-    if (adminId === envAdminId && masterKey === envMasterKey) {
+    console.log('Login attempt ID:', adminId);
+    console.log('Expected ID:', envAdminId);
+
+    if (adminId?.trim() === envAdminId && masterKey?.trim() === envMasterKey) {
       const token = jwt.sign(
         { role: 'admin', authenticated: true },
         process.env.JWT_SECRET,

@@ -37,3 +37,39 @@ export async function POST(request) {
     return Response.json({ error: err.message }, { status: 500 });
   }
 }
+export async function PUT(request) {
+  try {
+    const pkg = await request.json();
+    const { id, ...updateData } = pkg;
+    const cookieStore = await cookies();
+    
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      {
+        cookies: {
+          getAll: () => cookieStore.getAll(),
+          setAll: () => {},
+        },
+      }
+    );
+
+    const { data, error } = await supabase
+      .from('packages')
+      .update({
+        ...updateData,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return Response.json({ success: true, id: data.id });
+
+  } catch (err) {
+    console.error('Package Update Error:', err);
+    return Response.json({ error: err.message }, { status: 500 });
+  }
+}

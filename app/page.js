@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import HeroSlider from '@/components/HeroSlider';
 import SearchBar from '@/components/SearchBar';
 import TripCard from '@/components/TripCard';
+import SkeletonCard from '@/components/SkeletonCard';
 import { supabase } from '@/lib/supabase';
 import { Map, Headphones, Wallet, ShieldCheck, CheckCircle, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
@@ -51,7 +52,9 @@ export default function Home() {
           <Link href="/destinations?category=Indian Escapes" className="view-all-btn">View All</Link>
         </div>
         {loading ? (
-          <div className="empty-state">Loading packages...</div>
+          <div className="grid">
+            {[1,2,3].map(i => <SkeletonCard key={i} />)}
+          </div>
         ) : indianEscapes.length > 0 ? (
           <div className="grid">
             {indianEscapes.map(pkg => <TripCard key={pkg.id} pkg={pkg} />)}
@@ -89,7 +92,9 @@ export default function Home() {
           <Link href="/destinations?category=Overseas Adventures" className="view-all-btn">View All</Link>
         </div>
         {loading ? (
-          <div className="empty-state">Loading packages...</div>
+          <div className="grid">
+            {[1,2,3].map(i => <SkeletonCard key={i} />)}
+          </div>
         ) : overseasAdventures.length > 0 ? (
           <div className="grid">
             {overseasAdventures.map(pkg => <TripCard key={pkg.id} pkg={pkg} />)}
@@ -127,7 +132,9 @@ export default function Home() {
           <Link href="/destinations?category=Divine Destinations" className="view-all-btn">View All</Link>
         </div>
         {loading ? (
-          <div className="empty-state">Loading packages...</div>
+          <div className="grid">
+            {[1,2,3].map(i => <SkeletonCard key={i} />)}
+          </div>
         ) : divineDestinations.length > 0 ? (
           <div className="grid">
             {divineDestinations.map(pkg => <TripCard key={pkg.id} pkg={pkg} />)}
