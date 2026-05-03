@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Lock, ShieldCheck } from 'lucide-react';
+import { Lock, ShieldCheck, User } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const [adminId, setAdminId] = useState('');
@@ -50,6 +50,7 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{ position: 'relative' }}>
+              <User size={18} style={{ position: 'absolute', left: '15px', top: '15px', color: '#888' }} />
               <input 
                 type="text" 
                 value={adminId} 
@@ -58,7 +59,7 @@ export default function AdminLoginPage() {
                 placeholder="Admin ID" 
                 style={{ 
                   width: '100%', 
-                  padding: '15px', 
+                  padding: '15px 15px 15px 45px', 
                   borderRadius: '12px', 
                   border: '1px solid #ddd', 
                   fontSize: '1rem' 
