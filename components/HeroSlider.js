@@ -6,24 +6,24 @@ import { Play } from 'lucide-react';
 const HeroSlider = () => {
   const slides = [
     {
-      badge: "Trusted by 1000+ Travelers",
+      badge: "✦ Indian Escapes",
       headline: <>Discover <span>India</span>,<br/>Create Memories</>,
-      sub: "Seamless, stress-free travel across India's most breathtaking destinations — curated just for you.",
-      image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=80",
+      sub: "Seamless travel across India's most breathtaking destinations — curated just for you.",
+      image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=80",
       link: "/destinations?category=Indian Escapes"
     },
     {
-      badge: "Lifetime Adventures",
+      badge: "✦ Overseas Adventures",
       headline: <>Explore <span>Worlds</span>,<br/>Beyond Boundaries</>,
-      sub: "Experience the pinnacle of luxury and adventure in the world's most iconic destinations.",
-      image: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?auto=format&fit=crop&w=1920&q=80",
+      sub: "Experience the pinnacle of luxury and adventure in iconic global destinations.",
+      image: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?auto=format&fit=crop&w=1600&q=80",
       link: "/destinations?category=Overseas Adventures"
     },
     {
-      badge: "Peace & Devotion",
-      headline: <>Divine <span>Peace</span>,<br/>For Your Soul</>,
-      sub: "Embark on a spiritual journey to the most sacred places across the Indian subcontinent.",
-      image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1920&q=80",
+      badge: "✦ Divine Destinations",
+      headline: <>Sacred <span>Journeys</span>,<br/>Divine Peace</>,
+      sub: "Find spiritual travel bliss with sacred journeys to India's most divine pilgrimage sites.",
+      image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=80",
       link: "/destinations?category=Divine Destinations"
     }
   ];
@@ -89,17 +89,18 @@ const HeroSlider = () => {
         .hero {
           position: relative; height: 100vh; min-height: 600px;
           display: flex; align-items: center; overflow: hidden;
+          background: #0D1B2A;
         }
         .hero-slides { position: absolute; inset: 0; }
         .hero-slide {
           position: absolute; inset: 0;
           background-size: cover; background-position: center;
-          opacity: 0; transition: opacity 1.5s ease;
+          opacity: 0; transition: opacity 1.5s ease-in-out;
         }
         .hero-slide.active { opacity: 1; }
         .hero-slide::after {
           content: ''; position: absolute; inset: 0;
-          background: linear-gradient(135deg, rgba(13,27,42,0.85) 0%, rgba(13,27,42,0.4) 60%, transparent 100%);
+          background: linear-gradient(135deg, rgba(13,27,42,0.80) 0%, rgba(13,27,42,0.30) 60%, transparent 100%);
         }
         
         .hero-content {
@@ -108,8 +109,8 @@ const HeroSlider = () => {
         }
         .hero-badge {
           display: inline-flex; align-items: center; gap: 8px;
-          background: rgba(232, 160, 32, 0.18); border: 1px solid rgba(232, 160, 32, 0.4);
-          color: var(--primary-light); font-size: 0.8rem; font-weight: 600;
+          background: rgba(232, 160, 32, 0.2); border: 1px solid rgba(232, 160, 32, 0.4);
+          color: #F5C35A; font-size: 0.8rem; font-weight: 600;
           letter-spacing: 0.08em; text-transform: uppercase;
           padding: 6px 16px; border-radius: 20px; margin-bottom: 25px;
           backdrop-filter: blur(8px);
@@ -122,7 +123,7 @@ const HeroSlider = () => {
         }
         .hero-title :global(span) { color: var(--primary-color); }
         .hero-sub {
-          font-size: 1.1rem; color: rgba(255, 255, 255, 0.75);
+          font-size: 1.1rem; color: rgba(255, 255, 255, 0.85);
           line-height: 1.7; max-width: 520px; margin-bottom: 35px;
         }
         .hero-actions { display: flex; gap: 15px; flex-wrap: wrap; }
@@ -130,12 +131,12 @@ const HeroSlider = () => {
         .btn-outline-white {
           background: transparent; color: #fff;
           font-weight: 600; font-size: 0.95rem;
-          padding: 13px 28px; border-radius: var(--radius-sm);
+          padding: 13px 28px; border-radius: 8px;
           border: 1.5px solid rgba(255,255,255,0.4); cursor: pointer;
           display: inline-flex; align-items: center; gap: 10px;
-          transition: var(--transition); backdrop-filter: blur(4px);
+          transition: all 0.3s; backdrop-filter: blur(4px);
         }
-        .btn-outline-white:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .btn-outline-white:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(232,160,32,0.05); }
 
         .hero-dots {
           position: absolute; bottom: 40px; left: 5vw;

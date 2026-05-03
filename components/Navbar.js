@@ -1,14 +1,14 @@
 'use client';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, User, Sparkles } from 'lucide-react';
+import { Menu, X, ChevronDown, User } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -28,11 +28,11 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="nav-links">
-          <li><Link href="/destinations">Explore Now</Link></li>
+          <li><Link href="/destinations" className="nav-link">Explore Now</Link></li>
           
           {Object.entries(categories).map(([label, items]) => (
             <li key={label} className="has-dropdown">
-              <button>
+              <button className="nav-link">
                 {label} <ChevronDown className="chevron" size={14} />
               </button>
               <div className="dropdown">
@@ -44,15 +44,15 @@ const Navbar = () => {
                     {item}
                   </Link>
                 ))}
-                <Link href={`/destinations?category=${label}`} style={{ borderTop: '1px solid rgba(255,255,255,0.1)', color: 'var(--primary-color)', fontWeight: '700' }}>
+                <Link href={`/destinations?category=${label}`} className="view-all-drop">
                   View All
                 </Link>
               </div>
             </li>
           ))}
           
-          <li><Link href="/blog">Tips & Tales</Link></li>
-          <li><Link href="/contact">Contact</Link></li>
+          <li><Link href="/blog" className="nav-link">Tips & Tales</Link></li>
+          <li><Link href="/contact" className="nav-link">Contact</Link></li>
           
           <li>
             <Link href="/dashboard" className="account-link">
@@ -106,14 +106,15 @@ const Navbar = () => {
         .navbar {
           position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
           padding: 0 5vw; display: flex; align-items: center; justify-content: center;
-          height: 80px; background: rgba(13, 27, 42, 0.85);
-          backdrop-filter: blur(15px); border-bottom: 1px solid rgba(232, 160, 32, 0.1);
-          transition: all 0.3s ease;
+          height: 80px; background: rgba(13, 27, 42, 0.92);
+          backdrop-filter: blur(16px); border-bottom: 1px solid rgba(232, 160, 32, 0.15);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .navbar.scrolled {
-          background: rgba(13, 27, 42, 0.98);
+          background: #0D1B2A;
           height: 70px;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+          box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+          border-bottom-color: rgba(232, 160, 32, 0.3);
         }
         .nav-content-wrap {
           width: 100%; max-width: 1400px;
@@ -128,42 +129,45 @@ const Navbar = () => {
         
         .nav-links { display: flex; align-items: center; gap: 5px; list-style: none; }
         .nav-links > li { position: relative; }
-        .nav-links > li > a, .nav-links > li > button {
+        .nav-link {
           font-size: 0.88rem; font-weight: 500;
-          color: rgba(255, 255, 255, 0.8);
+          color: rgba(255, 255, 255, 0.9);
           padding: 10px 15px; border-radius: 8px;
           border: none; background: none; cursor: pointer;
           display: flex; align-items: center; gap: 6px;
           transition: all 0.3s ease;
         }
-        .nav-links > li > a:hover, .nav-links > li > button:hover {
+        .nav-link:hover {
           color: var(--primary-color); background: rgba(232, 160, 32, 0.1);
         }
         
         .dropdown {
           position: absolute; top: calc(100% + 10px); left: 0;
-          background: var(--secondary-color); border: 1px solid rgba(232, 160, 32, 0.15);
+          background: #1A2D42; border: 1px solid rgba(232, 160, 32, 0.2);
           border-radius: 12px; min-width: 220px; padding: 10px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.5);
           opacity: 0; visibility: hidden; transform: translateY(-10px);
           transition: all 0.2s ease; pointer-events: none;
         }
         .nav-links li:hover .dropdown { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
         .dropdown a {
           display: block; padding: 10px 15px;
-          color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.8); font-size: 0.85rem;
           border-radius: 8px; transition: all 0.2s;
         }
-        .dropdown a:hover { background: rgba(232, 160, 32, 0.1); color: var(--primary-color); }
+        .dropdown a:hover { background: rgba(232, 160, 32, 0.15); color: var(--primary-color); }
+        .view-all-drop { border-top: 1px solid rgba(255,255,255,0.1); color: var(--primary-color) !important; font-weight: 700; margin-top: 5px; }
         
         .nav-cta {
-          background: var(--primary-color) !important; color: var(--secondary-color) !important;
-          font-weight: 700 !important; padding: 10px 22px !important;
-          border-radius: 30px !important; box-shadow: 0 4px 15px rgba(232, 160, 32, 0.3);
+          background: var(--primary-color); color: #0D1B2A;
+          font-weight: 700; padding: 10px 22px; margin-left: 10px;
+          border-radius: 30px; box-shadow: 0 4px 15px rgba(232, 160, 32, 0.35);
+          transition: all 0.3s ease;
         }
-        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(232, 160, 32, 0.4); }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(232, 160, 32, 0.45); background: var(--primary-light); }
         
-        .account-link { color: #fff !important; }
+        .account-link { color: #fff; padding: 10px; border-radius: 50%; transition: all 0.3s; }
+        .account-link:hover { color: var(--primary-color); background: rgba(255,255,255,0.05); }
 
         .hamburger { display: none; flex-direction: column; gap: 6px; cursor: pointer; background: none; border: none; z-index: 1001; }
         .hamburger span { display: block; width: 28px; height: 2px; background: #fff; border-radius: 2px; transition: 0.3s; }
@@ -173,15 +177,15 @@ const Navbar = () => {
 
         .mobile-menu {
           position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-          background: var(--secondary-color); padding: 100px 5vw 40px;
+          background: #0D1B2A; padding: 100px 5vw 40px;
           transform: translateX(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           z-index: 999; overflow-y: auto;
         }
         .mobile-menu.open { transform: translateX(0); }
-        .mobile-menu-inner a { display: block; padding: 15px 0; color: rgba(255,255,255,0.8); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .mobile-menu-inner a { display: block; padding: 15px 0; color: rgba(255,255,255,0.9); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .mobile-section { color: var(--primary-color); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 25px 0 10px; }
         .mobile-sub { padding-left: 20px !important; font-size: 0.95rem !important; border: none !important; }
-        .mobile-cta { background: var(--primary-color); color: var(--secondary-color) !important; font-weight: 700; text-align: center; border-radius: 12px; margin-top: 30px; }
+        .mobile-cta { background: var(--primary-color); color: #0D1B2A !important; font-weight: 700; text-align: center; border-radius: 12px; margin-top: 30px; }
 
         @media (max-width: 1100px) {
           .nav-links { display: none; }

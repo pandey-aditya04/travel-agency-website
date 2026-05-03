@@ -16,7 +16,7 @@ const TripCard = ({ pkg }) => {
   } = pkg;
 
   return (
-    <Link href={`/package/${slug}`} className="trip-card-link">
+    <Link href={`/package/${slug || pkg.id}`} className="trip-card-link">
       <div className="trip-card">
         <div className="card-img-wrap">
           <img 
