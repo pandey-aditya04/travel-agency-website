@@ -18,10 +18,11 @@ export async function POST(req) {
   }
 
   try {
-    const { masterKey } = await req.json();
+    const { adminId, masterKey } = await req.json();
+    const envAdminId = process.env.ADMIN_ID;
     const envMasterKey = process.env.ADMIN_MASTER_KEY;
 
-    if (masterKey === envMasterKey) {
+    if (adminId === envAdminId && masterKey === envMasterKey) {
       const token = jwt.sign(
         { role: 'admin', authenticated: true },
         process.env.JWT_SECRET,
