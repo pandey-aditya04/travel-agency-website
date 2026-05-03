@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RM Yaatra Travels - Premium Travel Agency Platform
 
-## Getting Started
+RM Yaatra Travels is a high-performance, full-stack travel agency platform built with Next.js, Supabase, and Cloudinary. It features a premium design, robust lead management, and a seamless booking experience.
 
-First, run the development server:
+## 🚀 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🌍 For Travelers
+- **Modern Exploration**: Filter and search through diverse travel categories (Indian Escapes, Overseas Adventures, Divine Destinations).
+- **Interactive Booking**: Seamless 1-minute booking flow with real-time availability and traveler details.
+- **Personal Dashboard**: Track all upcoming and past trips, manage profile details, and download digital itineraries.
+- **PDF Itineraries**: Generate and download professional PDF booking confirmations instantly.
+- **Premium UI**: Responsive design with sleek animations, glassmorphism elements, and optimized WebP media.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🔐 For Admins
+- **Master Admin Panel**: Secure, JWT-protected dashboard to manage the entire platform.
+- **Trip Wizard**: A 4-step interactive upload wizard with live preview and Cloudinary image integration.
+- **Lead Management (CRM)**: Track customer interests, manage booking statuses, and access full traveler contact details.
+- **Security**: Built-in rate limiting on the admin login to prevent unauthorized access.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
+- **Frontend**: Next.js 15 (App Router), Lucide Icons, CSS Modules.
+- **Backend**: Supabase (PostgreSQL, Auth, RLS).
+- **Storage**: Cloudinary (Image optimization & CDN).
+- **PDF Core**: jsPDF with AutoTable.
+- **Deployment**: Optimized for Vercel/Netlify.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏁 Getting Started
 
-## Learn More
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/pandey-aditya04/travel-agency-website.git
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Configure Environment Variables**:
+   Create a `.env.local` file with the following:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_name
+   NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_preset
+   ADMIN_MASTER_KEY=your_secure_key
+   JWT_SECRET=your_jwt_secret
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+## 📄 License
+This project is proprietary and built for RM Yaatra Travels.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Built with ❤️ by Antigravity
