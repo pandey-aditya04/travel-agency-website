@@ -140,10 +140,10 @@ export default function Dashboard() {
     <div className="animate-fade">
       <h2 style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px' }}><Package color="var(--primary-color)"/> My Bookings</h2>
       {bookings.length > 0 ? (
-        <div style={{ display: 'grid', gap: '20px' }}>
+        <div className="bookings-list" style={{ display: 'grid', gap: '20px' }}>
           {bookings.map(booking => (
-            <div key={booking.id} style={{ background: '#fff', padding: '25px', borderRadius: '15px', boxShadow: 'var(--shadow-sm)', display: 'flex', gap: '20px', alignItems: 'center', border: '1px solid #eee' }}>
-              <img src={booking.packages?.cover_image_url} style={{ width: '120px', height: '100px', objectFit: 'cover', borderRadius: '10px' }} />
+            <div key={booking.id} className="booking-card" style={{ background: '#fff', padding: '25px', borderRadius: '15px', boxShadow: 'var(--shadow-sm)', display: 'flex', gap: '20px', alignItems: 'center', border: '1px solid #eee' }}>
+              <img src={booking.packages?.cover_image_url} className="booking-img" style={{ width: '120px', height: '100px', objectFit: 'cover', borderRadius: '10px' }} />
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>{booking.packages?.title}</h3>
@@ -161,10 +161,10 @@ export default function Dashboard() {
                 <div style={{ display: 'flex', gap: '20px', fontSize: '0.9rem', color: '#666' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Calendar size={14} /> {new Date(booking.travel_date).toLocaleDateString()}</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Clock size={14} /> {booking.packages?.duration_days} Days</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><User size={14} /> {booking.adults} Adults, {booking.children} Kids</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><User size={14} /> {booking.adults}A, {booking.children}K</span>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div className="booking-actions" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <button 
                     onClick={() => generatePDF(booking)}
                     className="btn btn-outline" 
@@ -250,7 +250,7 @@ export default function Dashboard() {
     <main>
       <Navbar />
       <div className="container" style={{ padding: '60px 20px 100px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '50px' }}>
+        <div className="dashboard-layout" style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '50px' }}>
           {/* Sidebar */}
           <aside>
             <div style={{ background: '#fff', padding: '30px', borderRadius: '25px', boxShadow: 'var(--shadow-md)', position: 'sticky', top: '120px' }}>
@@ -316,6 +316,15 @@ export default function Dashboard() {
         .form-group label { font-weight: 700; font-size: 0.95rem; color: #1a1a2e; }
         .loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 1024px) {
+          .dashboard-layout { grid-template-columns: 1fr !important; gap: 40px !important; }
+          aside div { position: relative !important; top: 0 !important; }
+          .booking-card { flex-direction: column; text-align: center; }
+          .booking-img { width: 100% !important; height: 200px !important; }
+          .booking-actions { width: 100%; flex-direction: row !important; }
+          .booking-actions .btn { flex: 1; }
+        }
       `}</style>
       <Footer />
     </main>

@@ -70,13 +70,13 @@ export default function AdminDashboard() {
     <main>
       <Navbar />
       <div className="container" style={{ padding: '60px 20px 100px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+        <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', flexWrap: 'wrap', gap: '20px' }}>
           <div>
-            <h1 style={{ fontSize: '2.5rem' }}>Master Admin Panel</h1>
+            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)' }}>Master Admin Panel</h1>
             <p style={{ color: '#666', marginTop: '10px' }}>Welcome back, Manage your travel empire here.</p>
           </div>
-          <div style={{ display: 'flex', gap: '15px' }}>
-            <Link href="/admin/upload" className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '15px 30px' }}>
+          <div style={{ display: 'flex', gap: '15px', width: '100%', maxWidth: 'max-content' }}>
+            <Link href="/admin/upload" className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '15px 30px', width: '100%' }}>
                 <Plus size={22} /> New Package
             </Link>
           </div>
@@ -145,8 +145,8 @@ export default function AdminDashboard() {
         </div>
 
         {activeTab === 'packages' ? (
-            <div style={{ background: '#fff', borderRadius: '25px', overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <div className="table-responsive" style={{ background: '#fff', borderRadius: '25px', overflowX: 'auto', boxShadow: 'var(--shadow-lg)' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
                 <thead>
                     <tr style={{ background: '#fafafa', borderBottom: '1px solid #f0f0f0' }}>
                     <th style={{ padding: '25px' }}>Trip Package</th>
@@ -215,18 +215,18 @@ export default function AdminDashboard() {
                         }}>
                             <div 
                                 onClick={() => setExpandedBooking(expandedBooking === bk.id ? null : bk.id)}
-                                style={{ padding: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+                                style={{ padding: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', flexWrap: 'wrap', gap: '20px' }}
                             >
-                                <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+                                <div className="booking-header-main" style={{ display: 'flex', gap: '30px', alignItems: 'center', flexWrap: 'wrap' }}>
                                     <div>
                                         <p style={{ fontWeight: '800', fontSize: '1.1rem' }}>{bk.customer_name}</p>
-                                        <p style={{ fontSize: '0.85rem', color: '#888' }}>{new Date(bk.created_at).toLocaleDateString()} • {new Date(bk.created_at).toLocaleTimeString()}</p>
+                                        <p style={{ fontSize: '0.85rem', color: '#888' }}>{new Date(bk.created_at).toLocaleDateString()}</p>
                                     </div>
-                                    <div style={{ borderLeft: '1px solid #eee', paddingLeft: '30px' }}>
-                                        <p style={{ fontSize: '0.8rem', color: '#888', fontWeight: '600', textTransform: 'uppercase' }}>Interest In</p>
+                                    <div className="header-divider" style={{ borderLeft: '1px solid #eee', paddingLeft: '30px' }}>
+                                        <p style={{ fontSize: '0.8rem', color: '#888', fontWeight: '600', textTransform: 'uppercase' }}>Interest</p>
                                         <p style={{ fontWeight: '700' }}>{bk.packages?.title || bk.destination}</p>
                                     </div>
-                                    <div style={{ borderLeft: '1px solid #eee', paddingLeft: '30px' }}>
+                                    <div className="header-divider" style={{ borderLeft: '1px solid #eee', paddingLeft: '30px' }}>
                                         <p style={{ fontSize: '0.8rem', color: '#888', fontWeight: '600', textTransform: 'uppercase' }}>Status</p>
                                         <span style={{ 
                                             padding: '4px 12px', 
@@ -244,7 +244,7 @@ export default function AdminDashboard() {
                             </div>
 
                             {expandedBooking === bk.id && (
-                                <div style={{ padding: '0 25px 25px', borderTop: '1px solid #f0f0f0', paddingTop: '25px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+                                <div className="booking-expanded" style={{ padding: '0 25px 25px', borderTop: '1px solid #f0f0f0', paddingTop: '25px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                         <div>
                                             <h4 style={{ fontSize: '0.9rem', color: '#888', textTransform: 'uppercase', marginBottom: '10px' }}>Contact Information</h4>
@@ -286,7 +286,7 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                        <div className="booking-actions" style={{ display: 'flex', gap: '10px' }}>
                                             <button onClick={() => updateBookingStatus(bk.id, 'Completed')} className="btn btn-primary" style={{ flex: 1, padding: '12px' }}>Mark as Handled</button>
                                             <button onClick={() => updateBookingStatus(bk.id, 'Cancelled')} className="btn btn-outline" style={{ flex: 1, padding: '12px', borderColor: '#ef4444', color: '#ef4444' }}>Reject Lead</button>
                                         </div>
@@ -308,6 +308,16 @@ export default function AdminDashboard() {
         .stat-header { display: flex; justifyContent: space-between; alignItems: center; marginBottom: 15px; }
         .stat-num { font-size: 2.2rem; font-weight: 800; color: var(--secondary-color); }
         .stat-label { color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; }
+
+        @media (max-width: 1024px) {
+          .booking-header-main { gap: 15px !important; }
+          .header-divider { border-left: none !important; padding-left: 0 !important; }
+          .admin-header { flex-direction: column; align-items: flex-start !important; }
+        }
+        @media (max-width: 768px) {
+          .booking-expanded { grid-template-columns: 1fr !important; gap: 30px !important; }
+          .booking-actions { flex-direction: column !important; }
+        }
       `}</style>
       <Footer />
     </main>

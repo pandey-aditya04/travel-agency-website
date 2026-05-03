@@ -66,8 +66,8 @@ function DestinationsContent() {
         textAlign: 'center'
       }}>
         <div className="container">
-          <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Our Destinations</h1>
-          <p style={{ fontSize: '1.2rem', color: '#ccc' }}>Explore the beauty of India and the world</p>
+          <h1 style={{ fontSize: 'clamp(2rem, 8vw, 3.5rem)', marginBottom: '1rem' }}>Our Destinations</h1>
+          <p style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', color: '#ccc' }}>Explore the beauty of India and the world</p>
         </div>
       </section>
 
@@ -103,7 +103,7 @@ function DestinationsContent() {
             ))}
           </div>
 
-          <div style={{ position: 'relative', width: '300px' }}>
+          <div className="search-box" style={{ position: 'relative' }}>
             <input 
               type="text" 
               placeholder="Search destination..." 
@@ -111,15 +111,22 @@ function DestinationsContent() {
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
-                padding: '10px 40px 10px 15px',
+                padding: '12px 40px 12px 15px',
                 borderRadius: '25px',
                 border: '1px solid #ddd',
-                background: '#f9f9f9'
+                background: '#f9f9f9',
+                fontSize: '1rem'
               }}
             />
-            <SearchIcon size={18} style={{ position: 'absolute', right: '15px', top: '10px', color: '#888' }} />
+            <SearchIcon size={18} style={{ position: 'absolute', right: '15px', top: '12px', color: '#888' }} />
           </div>
         </div>
+
+        <style jsx>{`
+          @media (max-width: 768px) {
+            .search-box { width: 100% !important; }
+          }
+        `}</style>
       </section>
 
       {/* Results */}

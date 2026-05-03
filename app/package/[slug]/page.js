@@ -107,8 +107,8 @@ export default function PackageDetail({ params }) {
             <span style={{ background: '#e8a020', padding: '5px 15px', borderRadius: '20px', fontSize: '0.9rem', fontWeight: '600' }}>
               {pkg.category}
             </span>
-            <h1 style={{ fontSize: '3.5rem', margin: '15px 0' }}>{pkg.title}</h1>
-            <div style={{ display: 'flex', gap: '30px', fontSize: '1.1rem' }}>
+            <h1 style={{ fontSize: 'clamp(2rem, 8vw, 3.5rem)', margin: '15px 0' }}>{pkg.title}</h1>
+            <div className="pkg-stats" style={{ display: 'flex', gap: '30px', fontSize: '1.1rem' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><MapPin size={20} color="#e8a020" /> {pkg.destination}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Clock size={20} color="#e8a020" /> {pkg.duration_days} Days</span>
             </div>
@@ -116,12 +116,12 @@ export default function PackageDetail({ params }) {
         </div>
       </section>
 
-      <section className="container" style={{ padding: '80px 20px', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '50px' }}>
+      <section className="container pkg-layout" style={{ padding: '80px 20px', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '50px' }}>
         {/* Left Side: Details */}
         <div>
           <div style={{ background: '#fff', padding: '40px', borderRadius: '15px', boxShadow: 'var(--shadow-sm)', marginBottom: '40px' }}>
             <h2 style={{ marginBottom: '1.5rem', fontSize: '1.8rem' }}>Trip Highlights</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div className="highlights-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
               {pkg.highlights?.map((h, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#4a4a68' }}>
                   <Check size={18} color="#10b981" /> {h}
@@ -146,7 +146,7 @@ export default function PackageDetail({ params }) {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+          <div className="inc-exc-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
             <div>
               <h3 style={{ marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '10px' }}><Check size={20} color="#10b981" /> Inclusions</h3>
               <p style={{ color: '#666', whiteSpace: 'pre-wrap' }}>{pkg.inclusions}</p>
@@ -157,6 +157,17 @@ export default function PackageDetail({ params }) {
             </div>
           </div>
         </div>
+
+        <style jsx>{`
+          @media (max-width: 1024px) {
+            .pkg-layout { grid-template-columns: 1fr !important; gap: 40px !important; }
+            aside div { position: relative !important; top: 0 !important; }
+          }
+          @media (max-width: 768px) {
+            .highlights-grid, .inc-exc-grid { grid-template-columns: 1fr !important; }
+            .pkg-stats { flex-direction: column; gap: 10px !important; }
+          }
+        `}</style>
 
         {/* Right Side: Booking Form */}
         <aside>
