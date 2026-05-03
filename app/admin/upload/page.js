@@ -287,49 +287,73 @@ function UploadTripContent() {
   };
 
   return (
-    <main style={{ background: '#F8F9FA', minHeight: '100vh' }}>
+    <main style={{ background: '#F0F2F5', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
       <AdminNavbar />
-      <div className="container" style={{ padding: '40px 20px 100px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '40px', alignItems: 'start' }}>
-          {/* Wizard Area */}
-          <div style={{ background: '#fff', padding: '40px', borderRadius: '30px', boxShadow: '0 20px 50px rgba(0,0,0,0.05)', border: '1px solid #F0F0F0' }}>
-            <h1 style={{ marginBottom: '20px' }}>{isEdit ? 'Edit Trip Package' : 'Create New Trip Package'}</h1>
-            <div className="stepper">
+      
+      <div className="admin-container">
+        <div className="admin-layout">
+          {/* Main Editor Section */}
+          <div className="editor-card">
+            <header className="editor-header">
+              <h1>{isEdit ? 'Refine Your Journey' : 'Craft a New Adventure'}</h1>
+              <p>Fill in the details below to create a compelling travel package.</p>
+            </header>
+
+            <div className="stepper-modern">
               {[1, 2, 3, 4].map(s => (
-                <div key={s} className={`step ${step === s ? 'active' : ''} ${step > s ? 'completed' : ''}`}>
-                  <div className="step-num">{step > s ? <Check size={18}/> : s}</div>
-                  <span className="step-label">Step {s}</span>
+                <div key={s} className={`step-item ${step === s ? 'active' : ''} ${step > s ? 'completed' : ''}`} onClick={() => setStep(s)}>
+                  <div className="step-circle">{step > s ? <Check size={16}/> : s}</div>
+                  <span>Step {s}</span>
                 </div>
               ))}
             </div>
 
-            {renderStep()}
-
-            <div className="wizard-navigation">
-              <button onClick={() => setStep(s => s - 1)} disabled={step === 1} className="btn btn-outline">Back</button>
-              {step < 4 && <button onClick={() => setStep(s => s + 1)} className="btn btn-secondary">Continue</button>}
+            <div className="step-content">
+              {renderStep()}
             </div>
+
+            <footer className="editor-footer">
+              <button onClick={() => setStep(s => s - 1)} disabled={step === 1} className="btn-back">
+                Previous
+              </button>
+              <div className="footer-right">
+                {step < 4 ? (
+                  <button onClick={() => setStep(s => s + 1)} className="btn-continue">
+                    Continue to Step {step + 1}
+                  </button>
+                ) : (
+                  <button onClick={handleSubmit} disabled={loading} className="btn-publish">
+                    {loading ? 'Processing...' : (isEdit ? 'Update Adventure' : 'Launch Adventure')}
+                  </button>
+                )}
+              </div>
+            </footer>
           </div>
 
-          {/* Live Preview Area */}
-          <aside>
-            <div style={{ position: 'sticky', top: '120px' }}>
-              <h4 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}><Eye size={20}/> Live Card Preview</h4>
-              <div className="card-preview-container">
-                <div className="card">
-                    <div className="card-img-preview">
-                        {formData.cover_image_url ? <img src={formData.cover_image_url} alt="Preview" /> : <div className="img-placeholder">Thumbnail</div>}
-                        {formData.discount_badge && <span className="badge">{formData.discount_badge}</span>}
+          {/* Live Preview Sidebar */}
+          <aside className="preview-sidebar">
+            <div className="preview-sticky">
+              <div className="preview-label"><Eye size={16}/> Live Preview</div>
+              <div className="premium-card">
+                <div className="card-media">
+                  {formData.cover_image_url ? (
+                    <img src={formData.cover_image_url} alt="Preview" />
+                  ) : (
+                    <div className="media-placeholder">
+                      <ImageIcon size={40} />
+                      <span>Thumbnail</span>
                     </div>
-                    <div className="card-content">
-                        <p className="cat">{formData.category}</p>
-                        <h3 className="title">{formData.title || 'Your Trip Title'}</h3>
-                        <p className="dest"><MapPin size={14}/> {formData.destination || 'Location'}</p>
-                        <div className="footer">
-                            <span className="price">₹{formData.price_inr || '0'}</span>
-                            <span className="days">{formData.duration_days || '0'} Days</span>
-                        </div>
-                    </div>
+                  )}
+                  {formData.discount_badge && <div className="card-badge">{formData.discount_badge}</div>}
+                </div>
+                <div className="card-info">
+                  <span className="card-cat">{formData.category}</span>
+                  <h3 className="card-title">{formData.title || 'Untitled Journey'}</h3>
+                  <div className="card-loc"><MapPin size={14}/> {formData.destination || 'Global'}</div>
+                  <div className="card-stats">
+                    <div className="card-price">₹{formData.price_inr?.toLocaleString() || '0'}</div>
+                    <div className="card-days">{formData.duration_days || '0'} Days</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -338,149 +362,61 @@ function UploadTripContent() {
       </div>
 
       <style jsx>{`
-        .stepper { 
-          display: flex; 
-          justify-content: space-between; 
-          margin-bottom: 50px; 
-          padding: 20px;
-          background: #F8F9FA;
-          border-radius: 20px;
-          position: relative;
-        }
-        .step { 
-          display: flex; 
-          flex-direction: column;
-          align-items: center; 
-          gap: 10px; 
-          color: #A0AEC0; 
-          position: relative;
-          z-index: 1;
-          flex: 1;
-        }
-        .step.active { color: var(--navy); }
-        .step.active .step-num { 
-          border-color: var(--amber); 
-          background: #fff; 
-          box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.2); 
-          color: var(--navy);
-        }
-        .step.completed { color: #10B981; }
-        .step.completed .step-num { background: #10B981; border-color: #10B981; color: #fff; }
-        .step-num { 
-          width: 40px; 
-          height: 40px; 
-          border-radius: 12px; 
-          border: 2px solid currentColor; 
-          display: flex; 
-          align-items: center; 
-          justify-content: center; 
-          font-size: 1rem; 
-          font-weight: 800;
-          background: #fff;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .step-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
+        .admin-container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+        .admin-layout { display: grid; grid-template-columns: 1fr 400px; gap: 40px; align-items: start; }
         
-        .step-title { 
-          margin-bottom: 2rem; 
-          display: flex; 
-          align-items: center; 
-          gap: 12px; 
-          font-size: 1.5rem; 
-          color: var(--navy);
-          font-family: var(--font-display);
-          font-weight: 800;
-          border-left: 4px solid var(--amber);
-          padding-left: 20px;
-        }
+        .editor-card { background: white; border-radius: 32px; padding: 50px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); border: 1px solid #E5E7EB; }
+        .editor-header h1 { font-size: 2.2rem; color: #111827; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+        .editor-header p { color: #6B7280; margin-bottom: 40px; font-size: 1.1rem; }
 
+        .stepper-modern { display: flex; gap: 10px; margin-bottom: 50px; background: #F3F4F6; padding: 8px; border-radius: 20px; }
+        .step-item { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px; border-radius: 14px; cursor: pointer; transition: 0.3s; color: #9CA3AF; font-weight: 700; font-size: 0.9rem; }
+        .step-item.active { background: white; color: #111827; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .step-item.completed { color: #10B981; }
+        .step-circle { width: 28px; height: 28px; border-radius: 8px; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+        
+        .step-title { font-size: 1.4rem; font-weight: 800; color: #111827; margin-bottom: 30px; display: flex; align-items: center; gap: 12px; }
+        
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
         .full-width { grid-column: span 2; }
-        label { font-weight: 700; font-size: 0.85rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; }
         
+        label { font-size: 0.85rem; font-weight: 800; color: #4B5563; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select, textarea { 
-          width: 100%;
-          padding: 14px 18px; 
-          border: 1.5px solid #E2E8F0; 
-          border-radius: 14px; 
-          font-family: inherit; 
-          font-size: 0.95rem; 
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          background: #FFFFFF;
-          color: var(--navy);
-          box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+          width: 100%; padding: 16px 20px; border: 2px solid #F3F4F6; border-radius: 16px; 
+          font-size: 1rem; color: #111827; transition: 0.3s; background: #F9FAFB;
         }
-        input:focus, select:focus, textarea:focus { 
-          border-color: var(--amber); 
-          background: #fff;
-          outline: none; 
-          box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.1), 0 10px 20px rgba(0,0,0,0.05);
-          transform: translateY(-1px);
-        }
-        
-        textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+        input:focus, select:focus, textarea:focus { border-color: #E8A020; background: white; outline: none; box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.1); }
 
-        .upload-box { 
-          position: relative; 
-          border: 2px dashed #CBD5E0; 
-          border-radius: 24px; 
-          padding: 50px 30px; 
-          text-align: center; 
-          transition: 0.3s;
-          background: #F7FAFC;
-        }
-        .upload-box:hover { border-color: var(--amber); background: #FFFBEB; }
-        .upload-placeholder { display: flex; flex-direction: column; align-items: center; gap: 12px; color: #718096; }
-        .upload-placeholder span { font-weight: 700; font-size: 0.9rem; }
-        
-        .preview-image-container { position: relative; width: 100%; height: 280px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .remove-img { 
-          position: absolute; top: 15px; right: 15px; background: #FF4D4D; color: #fff; 
-          border: none; width: 36px; height: 36px; border-radius: 12px; cursor: pointer; 
-          display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .remove-img:hover { transform: scale(1.1); background: #FF0000; }
-        
-        .tags-input-container { 
-          border: 1.5px solid #E2E8F0; border-radius: 16px; padding: 12px; 
-          background: #fff; transition: 0.3s;
-        }
-        .tag { 
-          background: var(--navy); color: var(--amber); padding: 8px 16px; 
-          border-radius: 10px; font-size: 0.8rem; font-weight: 700; 
-          display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(13, 27, 42, 0.2);
-        }
-        
-        .toggle-container { background: #EDF2F7; padding: 5px; border-radius: 16px; display: flex; gap: 5px; }
-        .toggle-container button { 
-          border: none; padding: 10px 24px; border-radius: 12px; cursor: pointer; 
-          background: none; font-weight: 800; font-size: 0.85rem; color: #718096; transition: 0.3s;
-        }
-        .toggle-container button.active { background: #fff; color: var(--navy); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        
-        .btn-outline { border: 2px solid #E2E8F0; color: #718096; background: transparent; font-weight: 800; padding: 14px 30px; border-radius: 14px; }
-        .btn-outline:hover { background: #F7FAFC; color: var(--navy); border-color: var(--navy); }
+        .editor-footer { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 40px; border-top: 1px solid #F3F4F6; }
+        .btn-back { padding: 14px 28px; border-radius: 14px; border: 2px solid #E5E7EB; background: white; font-weight: 700; cursor: pointer; transition: 0.3s; color: #6B7280; }
+        .btn-back:hover { border-color: #111827; color: #111827; }
+        .btn-continue { padding: 14px 32px; border-radius: 14px; background: #111827; color: white; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-publish { padding: 14px 32px; border-radius: 14px; background: #E8A020; color: white; font-weight: 700; border: none; cursor: pointer; box-shadow: 0 10px 20px rgba(232, 160, 32, 0.2); }
+        .btn-continue:hover, .btn-publish:hover { transform: translateY(-2px); opacity: 0.9; }
 
-        .card-preview-container { 
-          background: #fff; border-radius: 28px; padding: 15px; 
-          box-shadow: 0 40px 80px rgba(0,0,0,0.1); border: 1px solid #F0F0F0;
-        }
-        .card-img-preview { height: 240px; border-radius: 20px; overflow: hidden; margin-bottom: 20px; }
-        .img-placeholder { background: linear-gradient(135deg, #F6F8FA 0%, #E2E8F0 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: #A0AEC0; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+        .preview-sidebar { position: sticky; top: 120px; }
+        .preview-label { font-size: 0.8rem; font-weight: 800; color: #9CA3AF; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
         
-        .wizard-navigation { margin-top: 40px; display: flex; justify-content: space-between; border-top: 1px solid #F0F0F0; padding-top: 30px; }
-        @media (max-width: 1024px) {
-          .wizard-container { grid-template-columns: 1fr; }
-          .card-preview-sticky { position: relative; top: 0; margin-top: 40px; }
-        }
-        @media (max-width: 768px) {
+        .premium-card { background: white; border-radius: 28px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); border: 1px solid #E5E7EB; }
+        .card-media { height: 260px; background: #F3F4F6; position: relative; }
+        .card-media img { width: 100%; height: 100%; object-fit: cover; }
+        .media-placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #D1D5DB; gap: 12px; }
+        .card-badge { position: absolute; top: 20px; left: 20px; background: #E8A020; color: white; padding: 6px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; }
+        
+        .card-info { padding: 24px; }
+        .card-cat { font-size: 0.7rem; font-weight: 900; color: #E8A020; text-transform: uppercase; letter-spacing: 1.5px; }
+        .card-title { font-size: 1.6rem; font-weight: 800; color: #111827; margin: 10px 0; }
+        .card-loc { font-size: 0.9rem; color: #6B7280; display: flex; align-items: center; gap: 6px; margin-bottom: 24px; }
+        .card-stats { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #F3F4F6; padding-top: 20px; }
+        .card-price { font-size: 1.8rem; font-weight: 900; color: #111827; }
+        .card-days { font-size: 0.9rem; font-weight: 700; color: #9CA3AF; }
+
+        @media (max-width: 1200px) { .admin-layout { grid-template-columns: 1fr; } .preview-sidebar { display: none; } }
+        @media (max-width: 768px) { 
+          .editor-card { padding: 30px; border-radius: 24px; }
           .form-grid { grid-template-columns: 1fr; }
-          .full-width { grid-column: span 1; }
-          .step-title { font-size: 1.5rem; }
-          .wizard-header { padding: 40px 20px; }
-          .wizard-steps { gap: 10px; }
-          .step-label { display: none; }
+          .stepper-modern span { display: none; }
         }
       `}</style>
       <Footer />
