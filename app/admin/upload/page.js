@@ -470,7 +470,6 @@ function UploadTripContent() {
         .img-placeholder { background: linear-gradient(135deg, #F6F8FA 0%, #E2E8F0 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: #A0AEC0; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
         
         .wizard-navigation { margin-top: 40px; display: flex; justify-content: space-between; border-top: 1px solid #F0F0F0; padding-top: 30px; }
-      `}</style>
         @media (max-width: 1024px) {
           .wizard-container { grid-template-columns: 1fr; }
           .card-preview-sticky { position: relative; top: 0; margin-top: 40px; }
