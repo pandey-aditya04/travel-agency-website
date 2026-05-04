@@ -480,7 +480,6 @@ function UploadTripContent() {
         @media (max-width: 1200px) { .admin-layout { grid-template-columns: 1fr; } .preview-column { display: none; } }
         @media (max-width: 768px) { .editor-card { padding: 30px; } .form-grid { grid-template-columns: 1fr !important; } .step-label { display: none; } }
       `}</style>
-e>
       <Footer />
     </main>
   );
