@@ -239,11 +239,26 @@ h1, h2, h3, h4 {
 .cta-content p { color: rgba(13,27,42,0.7); font-weight: 500; font-size: 1.1rem; }
 
 @media (max-width: 768px) {
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .promo-content { text-align: center; justify-content: center; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .stat-num { font-size: 2rem; }
+  .promo-content { 
+    flex-direction: column; 
+    align-items: flex-start; 
+    text-align: left;
+    padding: 40px 6vw;
+  }
+  .promo-text h2 { font-size: 1.8rem; }
+  .promo-cta { width: 100%; }
+  .promo-cta .btn { width: 100%; justify-content: center; }
   .cta-content { text-align: center; justify-content: center; }
   .section-padding { padding: 60px 5vw; }
   .promo-banner { min-height: auto; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: 1fr; gap: 16px; }
+  .section-title { font-size: 1.8rem; }
 }
 
 /* Footer.js Styles */

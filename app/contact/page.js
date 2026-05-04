@@ -56,7 +56,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h4 style={{ fontWeight: '700' }}>Email Us</h4>
-                  <p style={{ color: '#666' }}>hello@rmyaatravels.com</p>
+                  <p style={{ color: '#666' }}>hello@travelagenc.vercel.app</p>
                   <p style={{ color: '#666', fontSize: '0.85rem' }}>We reply within 24 hours</p>
                 </div>
               </div>

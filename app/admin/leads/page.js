@@ -153,7 +153,7 @@ export default function AdminLeadsPage() {
                     <td>
                       <div className="action-row">
                         <a 
-                          href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, '')}?text=Hi ${lead.full_name}, we received your enquiry for ${lead.package_title} at RM Yaatra Travels. Our team will assist you shortly!`} 
+                          href={`https://wa.me/${lead.phone.replace(/[^0-9]/g, '')}?text=Hi ${lead.full_name}, we received your enquiry for ${lead.package_title} at Travel Agency. Our team will assist you shortly!`} 
                           target="_blank" 
                           className="wa-btn"
                         >

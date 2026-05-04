@@ -84,7 +84,7 @@ export default function Dashboard() {
     doc.rect(0, 0, 210, 40, 'F');
     doc.setTextColor(232, 160, 32);
     doc.setFontSize(24);
-    doc.text('RM YAATRA TRAVELS', 20, 25);
+    doc.text('TRAVEL AGENCY', 20, 25);
     
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
@@ -126,7 +126,7 @@ export default function Dashboard() {
 
     // Footer
     doc.setTextColor(150, 150, 150);
-    doc.text('Thank you for choosing RM Yaatra Travels. Have a safe journey!', 105, 285, { align: 'center' });
+    doc.text('Thank you for choosing Travel Agency. Have a safe journey!', 105, 285, { align: 'center' });
 
     doc.save(`Booking_${booking.id.substring(0, 8)}.pdf`);
   };

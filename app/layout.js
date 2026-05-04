@@ -1,9 +1,14 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "RM Yaatra Travels | Best Travel Agency for Indian & Overseas Adventures",
-  description: "Experience the world with RM Yaatra Travels. Expertly crafted tour packages for Indian Escapes, Overseas Adventures, and Divine Destinations. Book your next journey with India's most trusted travel partner.",
-  keywords: "travel agency, india tours, kerala backwaters, swiss alps, kedarnath yatra, tour packages",
+  title: 'Travel Agency – Indian & Overseas Tour Packages',
+  description: 'Book the best Indian, Overseas, and Divine tour packages. Travel Agency offers stress-free, curated journeys at the best prices.',
+  openGraph: {
+    title: 'Travel Agency',
+    description: 'Best tour packages for India and overseas destinations.',
+    url: 'https://travelagenc.vercel.app',
+    siteName: 'Travel Agency'
+  }
 };
 
 export default function RootLayout({ children }) {

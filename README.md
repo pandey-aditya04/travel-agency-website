@@ -1,6 +1,6 @@
-# RM Yaatra Travels - Premium Travel Agency Platform
+# Travel Agency - Premium Travel Agency Platform
 
-RM Yaatra Travels is a high-performance, full-stack travel agency platform built with Next.js, Supabase, and Cloudinary. It features a premium design, robust lead management, and a seamless booking experience.
+Travel Agency is a high-performance, full-stack travel agency platform built with Next.js, Supabase, and Cloudinary. It features a premium design, robust lead management, and a seamless booking experience.
 
 ## 🚀 Key Features
 
@@ -53,7 +53,7 @@ RM Yaatra Travels is a high-performance, full-stack travel agency platform built
    ```
 
 ## 📄 License
-This project is proprietary and built for RM Yaatra Travels.
+This project is proprietary and built for Travel Agency.
 
 ---
 Built with ❤️ by Antigravity

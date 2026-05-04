@@ -181,7 +181,7 @@ export default function Home() {
         </div>
         <div className="testi-grid">
           {[
-            { name: "Akash Kumar", place: "Mumbai, India", quote: "Thanks to RM Yaatra, we had the most relaxing holiday in the Maldives. Every detail was handled with care." },
+            { name: "Akash Kumar", place: "Mumbai, India", quote: "Thanks to Travel Agency, we had the most relaxing holiday in the Maldives. Every detail was handled with care." },
             { name: "Shivi Sharma", place: "New Delhi, India", quote: "The team is incredibly professional and made our Rajasthan trip absolutely magical. Best travel agency!" },
             { name: "Ravi Tiwari", place: "Lucknow, India", quote: "The Char Dham Yatra package was beyond expectations. Smooth logistics and knowledgeable guides." }
           ].map((t, i) => (

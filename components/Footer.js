@@ -33,9 +33,9 @@ const Footer = () => {
     <footer className="footer">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <div className="footer-logo">RM<span>YAATRA</span></div>
+          <div className="footer-logo">Travel <span style={{color:'#E8A020'}}>Agency</span></div>
           <p className="footer-tagline">
-            Your trusted partner for unforgettable journeys. Discover India and the world with RM Yaatra Travels.
+            Your trusted partner for unforgettable journeys across India and the world. Discover the beauty of travel with Travel Agency.
           </p>
           <div className="footer-socials">
             <a href="#" className="social-btn"><FacebookIcon /></a>
@@ -85,14 +85,14 @@ const Footer = () => {
             </li>
             <li>
               <Mail size={18} className="icon" />
-              <span>info@rmyaatravels.com</span>
+              <span>info@travelagenc.vercel.app</span>
             </li>
           </ul>
         </div>
       </div>
 
       <div className="container footer-bottom">
-        <p className="footer-copy">© {new Date().getFullYear()} RM Yaatra Travels. All rights reserved.</p>
+        <p className="footer-copy">© {new Date().getFullYear()} Travel Agency. All rights reserved.</p>
         <div className="footer-links">
           <Link href="#">Privacy Policy</Link>
           <Link href="#">Terms & Conditions</Link>

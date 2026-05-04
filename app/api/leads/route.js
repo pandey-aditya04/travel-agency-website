@@ -59,8 +59,8 @@ export async function POST(request) {
     if (process.env.RESEND_API_KEY) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
-        from: 'RM Yaatra Leads <leads@rmyaatravels.com>',
-        to: process.env.ADMIN_EMAIL || 'info@rmyaatravels.com',
+        from: 'Travel Agency Leads <leads@travelagenc.vercel.app>',
+        to: process.env.ADMIN_EMAIL || 'info@travelagenc.vercel.app',
         subject: `🔔 New Lead: ${full_name} — ${package_title}`,
         html: `
           <div style="font-family: sans-serif; color: #1A2D42;">
