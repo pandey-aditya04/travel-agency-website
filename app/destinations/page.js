@@ -17,6 +17,14 @@ export default function Destinations() {
     <main className="destinations-page">
       <Navbar />
       
+      <section className="dest-hero">
+        <div className="hero-overlay"></div>
+        <div className="container hero-content">
+          <h1>Our Destinations</h1>
+          <p>Explore the beauty of India and the world</p>
+        </div>
+      </section>
+
       <div className="container grid-wrapper">
         <div className="dest-grid">
           {destinations.map((dest, i) => (
@@ -36,7 +44,25 @@ export default function Destinations() {
       <Footer />
 
       <style jsx>{`
-        .destinations-page { background: #0D1B2A; min-height: 100vh; padding-top: 100px; padding-bottom: 100px; }
+        .destinations-page { background: #0D1B2A; min-height: 100vh; padding-bottom: 100px; }
+        
+        .dest-hero { 
+          position: relative; 
+          height: 350px; 
+          background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80'); 
+          background-size: cover; 
+          background-position: center; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center;
+          margin-bottom: 60px;
+          margin-top: 80px;
+        }
+        .dest-hero .hero-overlay { position: absolute; inset: 0; background: rgba(13,27,42,0.6); }
+        .dest-hero .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; }
+        .dest-hero h1 { font-size: 4rem; font-weight: 800; margin-bottom: 10px; }
+        .dest-hero p { font-size: 1.2rem; opacity: 0.8; }
+
         .grid-wrapper { padding: 0 5vw; }
         
         .dest-grid {

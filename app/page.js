@@ -206,7 +206,7 @@ export default function Home() {
       <style jsx>{`
         .home-container { 
           background-color: #fff; 
-          backgroundImage: url("https://www.transparenttextures.com/patterns/topography.png"); 
+          background-image: url("https://www.transparenttextures.com/patterns/topography.png"); 
           background-attachment: fixed; 
           overflow-x: hidden;
         }
@@ -251,6 +251,7 @@ export default function Home() {
         .divine-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }
         .label-pink { color: #E85D75; font-weight: 700; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 10px; display: block; }
         .divine-header h2 { font-size: 2.8rem; font-weight: 800; color: #1A2D42; margin-bottom: 15px; }
+        .divine-header .subtitle { color: #666; font-size: 1.1rem; }
         .divine-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
         .horizontal-card { display: flex; background: #f9f9f9; border-radius: 12px; overflow: hidden; height: 160px; border: 1px solid #eee; }
         .horizontal-card img { width: 140px; height: 100%; object-fit: cover; }
