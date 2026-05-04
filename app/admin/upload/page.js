@@ -125,11 +125,11 @@ function UploadTripContent() {
           <div className="animate-fade">
             <h3 className="step-title"><Info size={24} /> Step 1: Basic Details</h3>
             <div className="form-grid">
-              <div className="form-group full-width">
+              <div className="admin-form-group full-width">
                 <label>Package Title</label>
                 <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Magical Kerala Backwaters" required />
               </div>
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label>Category</label>
                 <select name="category" value={formData.category} onChange={handleChange}>
                   <option value="Indian Escapes">Indian Escapes</option>
@@ -137,19 +137,19 @@ function UploadTripContent() {
                   <option value="Divine Destinations">Divine Destinations</option>
                 </select>
               </div>
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label>Destination</label>
-                <input type="text" name="destination" value={formData.destination} onChange={handleChange} placeholder="e.g. Alleppey, Kerala" required />
+                <input type="text" name="destination" value={formData.destination} onChange={handleChange} placeholder="e.g. Munnar & Alleppey, Kerala" required />
               </div>
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label>Duration (Days)</label>
                 <input type="number" name="duration_days" value={formData.duration_days} onChange={handleChange} placeholder="5" required />
               </div>
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label>Price (INR)</label>
                 <input type="number" name="price_inr" value={formData.price_inr} onChange={handleChange} placeholder="24999" required />
               </div>
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label>Original Price (Optional)</label>
                 <input type="number" name="original_price_inr" value={formData.original_price_inr} onChange={handleChange} placeholder="32000" />
               </div>
@@ -161,7 +161,7 @@ function UploadTripContent() {
           <div className="animate-fade">
             <h3 className="step-title"><ImageIcon size={24} /> Step 2: Media Links</h3>
             <div className="media-link-area">
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label>Cover Image URL (Thumbnail)</label>
                 <div className="url-input-box">
                   <input 
@@ -180,7 +180,7 @@ function UploadTripContent() {
                 </div>
               </div>
               
-              <div className="form-group" style={{ marginTop: '30px' }}>
+              <div className="admin-form-group" style={{ marginTop: '30px' }}>
                 <label>Add Gallery Image URL</label>
                 <div className="url-add-group">
                   <input 
@@ -219,25 +219,25 @@ function UploadTripContent() {
           <div className="animate-fade">
             <h3 className="step-title"><List size={24} /> Step 3: Package Content</h3>
             <div className="content-area">
-              <div className="form-group" style={{ marginBottom: '24px' }}>
+              <div className="admin-form-group" style={{ marginBottom: '24px' }}>
                 <label>Short Description (Hero Intro)</label>
                 <textarea name="short_description" value={formData.short_description} onChange={handleChange} rows="3" placeholder="Briefly describe the trip's vibe..."></textarea>
               </div>
-              <div className="form-group" style={{ marginBottom: '24px' }}>
+              <div className="admin-form-group" style={{ marginBottom: '24px' }}>
                 <label>Detailed Itinerary (Text Format)</label>
                 <textarea name="itinerary" value={formData.itinerary} onChange={handleChange} rows="6" placeholder="Day 1: Arrival...&#10;Day 2: Exploration..."></textarea>
               </div>
               <div className="form-grid">
-                <div className="form-group">
+                <div className="admin-form-group">
                   <label>What's Included</label>
                   <textarea name="inclusions" value={formData.inclusions} onChange={handleChange} rows="4" placeholder="Breakfast, Hotel, Guide..."></textarea>
                 </div>
-                <div className="form-group">
+                <div className="admin-form-group">
                   <label>What's Excluded</label>
                   <textarea name="exclusions" value={formData.exclusions} onChange={handleChange} rows="4" placeholder="Flights, Personal expenses..."></textarea>
                 </div>
               </div>
-              <div className="form-group" style={{ marginTop: '24px' }}>
+              <div className="admin-form-group" style={{ marginTop: '24px' }}>
                 <label>Highlights (Press Enter to add tags)</label>
                 <div className="modern-tags-input">
                   <div className="tags-chips">
@@ -257,18 +257,18 @@ function UploadTripContent() {
             <h3 className="step-title"><Settings size={24} /> Step 4: Final Settings</h3>
             <div className="settings-area">
               <div className="settings-grid">
-                <div className="form-group">
+                <div className="admin-form-group">
                   <label>Package Status</label>
                   <div className="toggle-v2">
                     <button onClick={() => setFormData({...formData, status: 'Draft'})} className={formData.status === 'Draft' ? 'active' : ''}>Draft</button>
                     <button onClick={() => setFormData({...formData, status: 'Published'})} className={formData.status === 'Published' ? 'active' : ''}>Published</button>
                   </div>
                 </div>
-                <div className="form-group">
+                <div className="admin-form-group">
                   <label>Discount Badge (Text)</label>
                   <input type="text" name="discount_badge" value={formData.discount_badge} onChange={handleChange} placeholder="e.g. 20% OFF" />
                 </div>
-                <div className="form-group flex-row">
+                <div className="admin-form-group flex-row">
                   <label className="checkbox-label">
                     <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} />
                     <span>Featured on Homepage</span>
@@ -373,7 +373,7 @@ function UploadTripContent() {
       </div>
 
       <style jsx>{`
-        .admin-page-bg { background: #f8fafc; min-height: 100vh; padding-bottom: 80px; font-family: 'Inter', sans-serif; }
+        .admin-page-bg { background: #f8fafc !important; min-height: 100vh; padding-bottom: 80px; font-family: 'Inter', sans-serif; }
         .admin-container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
         .admin-layout { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
 
@@ -395,17 +395,34 @@ function UploadTripContent() {
         .step-num { width: 26px; height: 26px; border-radius: 6px; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
 
         /* Form */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .full-width { grid-column: span 2; }
-        label { font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-        input, select, textarea { 
-          width: 100%; padding: 14px 18px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
-          font-size: 0.95rem; color: #0f172a; transition: 0.3s; background: #fcfdfe;
-          min-height: 52px;
+        .form-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+        .admin-form-group { display: block !important; margin-bottom: 20px !important; width: 100% !important; }
+        .full-width { grid-column: span 2 !important; }
+        
+        label { 
+          display: block !important;
+          font-size: 0.8rem !important; 
+          font-weight: 700 !important; 
+          color: #475569 !important; 
+          text-transform: uppercase !important; 
+          letter-spacing: 0.5px !important; 
+          margin-bottom: 8px !important; 
         }
-        textarea { height: auto; min-height: 100px; }
-        input:focus, select:focus, textarea:focus { border-color: #E8A020; background: #fff; outline: none; box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.1); }
+        
+        input, select, textarea { 
+          display: block !important;
+          width: 100% !important; 
+          padding: 14px 18px !important; 
+          border: 1.5px solid #e2e8f0 !important; 
+          border-radius: 12px !important; 
+          font-size: 0.95rem !important; 
+          color: #0f172a !important; 
+          background: #fcfdfe !important;
+          min-height: 52px !important;
+          outline: none !important;
+        }
+        textarea { height: auto !important; min-height: 120px !important; }
+        input:focus, select:focus, textarea:focus { border-color: #E8A020 !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.1) !important; }
 
         /* URL Input Area */
         .url-input-box { position: relative; }
@@ -426,7 +443,7 @@ function UploadTripContent() {
         .tags-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
         .chip { background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
         .chip button { color: #94a3b8; font-size: 1.2rem; }
-        .modern-tags-input input { border: none; padding: 5px; background: transparent; box-shadow: none; min-height: auto; width: 100%; }
+        .modern-tags-input input { border: none !important; padding: 5px !important; background: transparent !important; box-shadow: none !important; min-height: auto !important; }
 
         /* Toggle */
         .toggle-v2 { display: flex; gap: 5px; background: #f1f5f9; padding: 4px; border-radius: 10px; width: fit-content; }
@@ -434,7 +451,7 @@ function UploadTripContent() {
         .toggle-v2 button.active { background: #fff; color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .checkbox-label input { width: 18px; height: 18px; min-height: auto; }
+        .checkbox-label input { width: 18px; height: 18px; min-height: auto !important; }
 
         /* Footer */
         .editor-footer { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 40px; border-top: 1px solid #f1f5f9; }
@@ -461,8 +478,9 @@ function UploadTripContent() {
         .preview-tips { margin-top: 20px; font-size: 0.8rem; color: #64748b; font-style: italic; display: flex; align-items: center; gap: 8px; padding: 0 10px; }
 
         @media (max-width: 1200px) { .admin-layout { grid-template-columns: 1fr; } .preview-column { display: none; } }
-        @media (max-width: 768px) { .editor-card { padding: 30px; } .form-grid { grid-template-columns: 1fr; } .step-label { display: none; } }
+        @media (max-width: 768px) { .editor-card { padding: 30px; } .form-grid { grid-template-columns: 1fr !important; } .step-label { display: none; } }
       `}</style>
+e>
       <Footer />
     </main>
   );
