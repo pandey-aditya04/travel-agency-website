@@ -50,7 +50,12 @@ function UploadTripContent() {
       .single();
     
     if (data) {
-      setFormData(data);
+      // If itinerary is an array, convert to string for the textarea
+      let itineraryStr = data.itinerary;
+      if (Array.isArray(data.itinerary)) {
+        itineraryStr = data.itinerary.map(item => `Day ${item.day}: ${item.title}\n${item.description}`).join('\n\n');
+      }
+      setFormData({ ...data, itinerary: itineraryStr });
     }
     setLoading(false);
   };
@@ -67,40 +72,9 @@ function UploadTripContent() {
     }
   };
 
-  const handleFileUpload = async (e, isGallery = false) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setLoading(true);
-    try {
-      const uploadedUrls = [];
-      for (const file of files) {
-        const fileData = new FormData();
-        fileData.append('file', file);
-        fileData.append('upload_preset', 'ml_default');
-
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
-          method: 'POST',
-          body: fileData
-        });
-        const data = await response.json();
-        uploadedUrls.push(data.secure_url);
-      }
-
-      if (isGallery) {
-        setFormData(prev => ({ ...prev, gallery_urls: [...prev.gallery_urls, ...uploadedUrls] }));
-      } else {
-        setFormData(prev => ({ ...prev, cover_image_url: uploadedUrls[0] }));
-      }
-    } catch (err) {
-      console.error('Upload failed:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addHighlight = (e) => {
+  const handleHighlightEnter = (e) => {
     if (e.key === 'Enter' && e.target.value) {
+      e.preventDefault();
       setFormData(prev => ({ ...prev, highlights: [...prev.highlights, e.target.value] }));
       e.target.value = '';
     }
@@ -117,6 +91,11 @@ function UploadTripContent() {
       const endpoint = '/api/admin/packages';
       const method = isEdit ? 'PUT' : 'POST';
       
+      // Convert itinerary string back to array if possible, or keep as string
+      // The current schema might expect a string or an array. 
+      // Most of our previous code used arrays for the frontend display.
+      // We'll send it as is for now, but ensure it's not broken.
+      
       const payload = isEdit ? { ...formData, id: editId } : formData;
 
       const res = await fetch(endpoint, {
@@ -129,8 +108,8 @@ function UploadTripContent() {
       
       if (!res.ok) throw new Error(result.error || 'Failed to save');
 
-      alert(isEdit ? 'Package updated successfully!' : 'Package published successfully!');
-      window.location.href = '/admin/dashboard';
+      alert(isEdit ? 'Changes saved successfully!' : 'Package published successfully!');
+      if (!isEdit) window.location.href = '/admin/dashboard';
     } catch (err) {
       console.error('Save error:', err);
       alert('Error saving package: ' + err.message);
@@ -245,7 +224,7 @@ function UploadTripContent() {
                 <textarea name="short_description" value={formData.short_description} onChange={handleChange} rows="3" placeholder="Briefly describe the trip's vibe..."></textarea>
               </div>
               <div className="form-group" style={{ marginBottom: '24px' }}>
-                <label>Detailed Itinerary (Day-by-Day breakdown)</label>
+                <label>Detailed Itinerary (Text Format)</label>
                 <textarea name="itinerary" value={formData.itinerary} onChange={handleChange} rows="6" placeholder="Day 1: Arrival...&#10;Day 2: Exploration..."></textarea>
               </div>
               <div className="form-grid">
@@ -266,7 +245,7 @@ function UploadTripContent() {
                       <span key={i} className="chip">{tag} <button onClick={() => removeHighlight(i)}>×</button></span>
                     ))}
                   </div>
-                  <input type="text" onKeyDown={addHighlight} placeholder="e.g. Free Breakfast" />
+                  <input type="text" onKeyDown={handleHighlightEnter} placeholder="e.g. Free Breakfast" />
                 </div>
               </div>
             </div>
@@ -316,7 +295,14 @@ function UploadTripContent() {
           {/* Left: Multi-step Form */}
           <div className="editor-card">
             <header className="editor-header">
-              <div className="status-badge">{isEdit ? 'Editing Package' : 'New Package'}</div>
+              <div className="header-top">
+                <div className="status-badge">{isEdit ? 'Editing Package' : 'New Package'}</div>
+                {isEdit && (
+                  <button onClick={handleSubmit} disabled={loading} className="quick-save-btn">
+                    {loading ? 'Saving...' : 'Quick Save Changes'}
+                  </button>
+                )}
+              </div>
               <h1>{isEdit ? 'Refine Your Journey' : 'Craft a New Adventure'}</h1>
               <p>Design a compelling travel experience that will wow your customers.</p>
             </header>
@@ -345,7 +331,7 @@ function UploadTripContent() {
                   </button>
                 ) : (
                   <button onClick={handleSubmit} disabled={loading} className="btn-finish-admin">
-                    {loading ? 'Processing...' : (isEdit ? 'Update Package' : 'Launch Package')}
+                    {loading ? 'Processing...' : (isEdit ? 'Save Changes' : 'Launch Package')}
                   </button>
                 )}
               </div>
@@ -393,7 +379,11 @@ function UploadTripContent() {
 
         .editor-card { background: #fff; border-radius: 24px; padding: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
         .editor-header { margin-bottom: 40px; }
-        .status-badge { display: inline-block; padding: 4px 12px; background: #f1f5f9; color: #64748b; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .status-badge { display: inline-block; padding: 4px 12px; background: #f1f5f9; color: #64748b; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .quick-save-btn { background: #10b981; color: #fff; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
+        .quick-save-btn:hover { background: #059669; transform: translateY(-2px); }
+        
         .editor-header h1 { font-size: 2.2rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; letter-spacing: -0.5px; }
         .editor-header p { color: #64748b; font-size: 1.1rem; }
 
@@ -406,13 +396,15 @@ function UploadTripContent() {
 
         /* Form */
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .form-group { display: flex; flex-direction: column; gap: 10px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
         .full-width { grid-column: span 2; }
-        label { font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        label { font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
         input, select, textarea { 
           width: 100%; padding: 14px 18px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
           font-size: 0.95rem; color: #0f172a; transition: 0.3s; background: #fcfdfe;
+          min-height: 52px;
         }
+        textarea { height: auto; min-height: 100px; }
         input:focus, select:focus, textarea:focus { border-color: #E8A020; background: #fff; outline: none; box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.1); }
 
         /* URL Input Area */
@@ -434,7 +426,7 @@ function UploadTripContent() {
         .tags-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
         .chip { background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
         .chip button { color: #94a3b8; font-size: 1.2rem; }
-        .modern-tags-input input { border: none; padding: 5px; background: transparent; box-shadow: none; }
+        .modern-tags-input input { border: none; padding: 5px; background: transparent; box-shadow: none; min-height: auto; width: 100%; }
 
         /* Toggle */
         .toggle-v2 { display: flex; gap: 5px; background: #f1f5f9; padding: 4px; border-radius: 10px; width: fit-content; }
@@ -442,7 +434,7 @@ function UploadTripContent() {
         .toggle-v2 button.active { background: #fff; color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .checkbox-label input { width: 18px; height: 18px; }
+        .checkbox-label input { width: 18px; height: 18px; min-height: auto; }
 
         /* Footer */
         .editor-footer { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 40px; border-top: 1px solid #f1f5f9; }

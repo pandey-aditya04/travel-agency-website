@@ -40,7 +40,7 @@ export async function POST(request) {
 export async function PUT(request) {
   try {
     const pkg = await request.json();
-    const { id, ...updateData } = pkg;
+    const { id, created_at, ...updateData } = pkg;
     const cookieStore = await cookies();
     
     const supabase = createServerClient(
