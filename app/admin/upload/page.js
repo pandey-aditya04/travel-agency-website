@@ -144,7 +144,7 @@ function UploadTripContent() {
       case 1:
         return (
           <div className="animate-fade">
-            <h3 className="step-title"><Info /> Step 1: Basic Details (The Core Info)</h3>
+            <h3 className="step-title"><Info size={24} /> Step 1: Basic Details</h3>
             <div className="form-grid">
               <div className="form-group full-width">
                 <label>Package Title</label>
@@ -164,15 +164,15 @@ function UploadTripContent() {
               </div>
               <div className="form-group">
                 <label>Duration (Days)</label>
-                <input type="number" name="duration_days" value={formData.duration_days} onChange={handleChange} required />
+                <input type="number" name="duration_days" value={formData.duration_days} onChange={handleChange} placeholder="5" required />
               </div>
               <div className="form-group">
                 <label>Price (INR)</label>
-                <input type="number" name="price_inr" value={formData.price_inr} onChange={handleChange} required />
+                <input type="number" name="price_inr" value={formData.price_inr} onChange={handleChange} placeholder="24999" required />
               </div>
               <div className="form-group">
-                <label>Original Price (for discount)</label>
-                <input type="number" name="original_price_inr" value={formData.original_price_inr} onChange={handleChange} />
+                <label>Original Price (Optional)</label>
+                <input type="number" name="original_price_inr" value={formData.original_price_inr} onChange={handleChange} placeholder="32000" />
               </div>
             </div>
           </div>
@@ -180,39 +180,54 @@ function UploadTripContent() {
       case 2:
         return (
           <div className="animate-fade">
-            <h3 className="step-title"><ImageIcon /> Step 2: Media Upload (The Thumbnail & B-Roll)</h3>
-            <div className="media-upload-area">
+            <h3 className="step-title"><ImageIcon size={24} /> Step 2: Media Links</h3>
+            <div className="media-link-area">
               <div className="form-group">
-                <label>Cover Image (Thumbnail)</label>
-                <div className="upload-box">
-                  {formData.cover_image_url ? (
-                    <div className="preview-image-container">
-                        <img src={formData.cover_image_url} alt="Cover" />
-                        <button onClick={() => setFormData({...formData, cover_image_url: ''})} className="remove-img"><Trash2 size={16}/></button>
-                    </div>
-                  ) : (
-                    <div className="upload-placeholder">
-                      <Upload size={30} />
-                      <span>Drag & drop or click to upload</span>
-                      <input type="file" onChange={(e) => handleFileUpload(e, false)} />
+                <label>Cover Image URL (Thumbnail)</label>
+                <div className="url-input-box">
+                  <input 
+                    type="text" 
+                    name="cover_image_url" 
+                    value={formData.cover_image_url} 
+                    onChange={handleChange} 
+                    placeholder="Paste image URL here (https://...)" 
+                  />
+                  {formData.cover_image_url && (
+                    <div className="url-preview-mini">
+                      <img src={formData.cover_image_url} alt="Cover Preview" />
+                      <button onClick={() => setFormData({...formData, cover_image_url: ''})} className="clear-url"><Trash2 size={14}/></button>
                     </div>
                   )}
                 </div>
               </div>
-              <div className="form-group">
-                <label>Gallery Images</label>
-                <div className="upload-box">
-                  <div className="upload-placeholder">
-                    <Plus size={30} />
-                    <span>Upload multiple images</span>
-                    <input type="file" multiple onChange={(e) => handleFileUpload(e, true)} />
-                  </div>
+              
+              <div className="form-group" style={{ marginTop: '30px' }}>
+                <label>Add Gallery Image URL</label>
+                <div className="url-add-group">
+                  <input 
+                    type="text" 
+                    id="new-gallery-url" 
+                    placeholder="Paste gallery image URL..." 
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        setFormData({...formData, gallery_urls: [...formData.gallery_urls, e.target.value]});
+                        e.target.value = '';
+                      }
+                    }}
+                  />
+                  <button className="add-btn" onClick={() => {
+                    const el = document.getElementById('new-gallery-url');
+                    if (el.value) {
+                      setFormData({...formData, gallery_urls: [...formData.gallery_urls, el.value]});
+                      el.value = '';
+                    }
+                  }}><Plus size={20}/></button>
                 </div>
-                <div className="gallery-preview">
+                <div className="gallery-link-previews">
                   {formData.gallery_urls.map((url, i) => (
-                    <div key={i} className="gallery-item">
-                        <img src={url} alt="Gallery" />
-                        <button onClick={() => setFormData({...formData, gallery_urls: formData.gallery_urls.filter((_, idx) => idx !== i)})} className="remove-img"><Trash2 size={14}/></button>
+                    <div key={i} className="gallery-link-item">
+                      <img src={url} alt="Gallery" />
+                      <button onClick={() => setFormData({...formData, gallery_urls: formData.gallery_urls.filter((_, idx) => idx !== i)})} className="remove-link"><Trash2 size={12}/></button>
                     </div>
                   ))}
                 </div>
@@ -223,31 +238,35 @@ function UploadTripContent() {
       case 3:
         return (
           <div className="animate-fade">
-            <h3 className="step-title"><List /> Step 3: Itinerary & Description (The Content)</h3>
+            <h3 className="step-title"><List size={24} /> Step 3: Package Content</h3>
             <div className="content-area">
-              <div className="form-group">
-                <label>Itinerary (Day-by-Day breakdown)</label>
-                <textarea name="itinerary" value={formData.itinerary} onChange={handleChange} rows="8" placeholder="Day 1: Arrival...&#10;Day 2: Exploration..."></textarea>
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <label>Short Description (Hero Intro)</label>
+                <textarea name="short_description" value={formData.short_description} onChange={handleChange} rows="3" placeholder="Briefly describe the trip's vibe..."></textarea>
+              </div>
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <label>Detailed Itinerary (Day-by-Day breakdown)</label>
+                <textarea name="itinerary" value={formData.itinerary} onChange={handleChange} rows="6" placeholder="Day 1: Arrival...&#10;Day 2: Exploration..."></textarea>
               </div>
               <div className="form-grid">
                 <div className="form-group">
-                  <label>Inclusions</label>
-                  <textarea name="inclusions" value={formData.inclusions} onChange={handleChange} rows="4"></textarea>
+                  <label>What's Included</label>
+                  <textarea name="inclusions" value={formData.inclusions} onChange={handleChange} rows="4" placeholder="Breakfast, Hotel, Guide..."></textarea>
                 </div>
                 <div className="form-group">
-                  <label>Exclusions</label>
-                  <textarea name="exclusions" value={formData.exclusions} onChange={handleChange} rows="4"></textarea>
+                  <label>What's Excluded</label>
+                  <textarea name="exclusions" value={formData.exclusions} onChange={handleChange} rows="4" placeholder="Flights, Personal expenses..."></textarea>
                 </div>
               </div>
-              <div className="form-group">
+              <div className="form-group" style={{ marginTop: '24px' }}>
                 <label>Highlights (Press Enter to add tags)</label>
-                <div className="tags-input-container">
-                    <div className="tags-list">
-                        {formData.highlights.map((tag, i) => (
-                            <span key={i} className="tag">{tag} <button onClick={() => removeHighlight(i)}>×</button></span>
-                        ))}
-                    </div>
-                    <input type="text" onKeyDown={addHighlight} placeholder="e.g. Free Breakfast" />
+                <div className="modern-tags-input">
+                  <div className="tags-chips">
+                    {formData.highlights.map((tag, i) => (
+                      <span key={i} className="chip">{tag} <button onClick={() => removeHighlight(i)}>×</button></span>
+                    ))}
+                  </div>
+                  <input type="text" onKeyDown={addHighlight} placeholder="e.g. Free Breakfast" />
                 </div>
               </div>
             </div>
@@ -256,27 +275,29 @@ function UploadTripContent() {
       case 4:
         return (
           <div className="animate-fade">
-            <h3 className="step-title"><Settings /> Step 4: Preview & Publish (The Final Check)</h3>
+            <h3 className="step-title"><Settings size={24} /> Step 4: Final Settings</h3>
             <div className="settings-area">
               <div className="settings-grid">
                 <div className="form-group">
-                  <label>Visibility Status</label>
-                  <div className="toggle-container">
+                  <label>Package Status</label>
+                  <div className="toggle-v2">
                     <button onClick={() => setFormData({...formData, status: 'Draft'})} className={formData.status === 'Draft' ? 'active' : ''}>Draft</button>
                     <button onClick={() => setFormData({...formData, status: 'Published'})} className={formData.status === 'Published' ? 'active' : ''}>Published</button>
                   </div>
                 </div>
                 <div className="form-group">
-                  <label>Discount Badge</label>
+                  <label>Discount Badge (Text)</label>
                   <input type="text" name="discount_badge" value={formData.discount_badge} onChange={handleChange} placeholder="e.g. 20% OFF" />
                 </div>
-                <div className="form-group featured-check">
-                  <label><input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} /> Pin to Homepage</label>
+                <div className="form-group flex-row">
+                  <label className="checkbox-label">
+                    <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} />
+                    <span>Featured on Homepage</span>
+                  </label>
                 </div>
               </div>
               <div className="final-actions">
-                <button onClick={handleSubmit} disabled={loading} className="btn btn-secondary">Save as Draft</button>
-                <button onClick={() => {setFormData({...formData, status: 'Published'}); handleSubmit();}} disabled={loading} className="btn btn-primary">{isEdit ? 'Update Package' : 'Publish Package'}</button>
+                <p className="summary-info">Your package will be saved as <strong>{formData.status}</strong>.</p>
               </div>
             </div>
           </div>
@@ -287,74 +308,78 @@ function UploadTripContent() {
   };
 
   return (
-    <main style={{ background: '#F0F2F5', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
+    <main className="admin-page-bg">
       <AdminNavbar />
       
       <div className="admin-container">
         <div className="admin-layout">
-          {/* Main Editor Section */}
+          {/* Left: Multi-step Form */}
           <div className="editor-card">
             <header className="editor-header">
+              <div className="status-badge">{isEdit ? 'Editing Package' : 'New Package'}</div>
               <h1>{isEdit ? 'Refine Your Journey' : 'Craft a New Adventure'}</h1>
-              <p>Fill in the details below to create a compelling travel package.</p>
+              <p>Design a compelling travel experience that will wow your customers.</p>
             </header>
 
-            <div className="stepper-modern">
+            <div className="stepper-v2">
               {[1, 2, 3, 4].map(s => (
-                <div key={s} className={`step-item ${step === s ? 'active' : ''} ${step > s ? 'completed' : ''}`} onClick={() => setStep(s)}>
-                  <div className="step-circle">{step > s ? <Check size={16}/> : s}</div>
-                  <span>Step {s}</span>
+                <div key={s} className={`step-box ${step === s ? 'active' : ''} ${step > s ? 'done' : ''}`} onClick={() => setStep(s)}>
+                  <div className="step-num">{step > s ? <Check size={16}/> : s}</div>
+                  <div className="step-label">Step {s}</div>
                 </div>
               ))}
             </div>
 
-            <div className="step-content">
+            <div className="form-container-body">
               {renderStep()}
             </div>
 
             <footer className="editor-footer">
-              <button onClick={() => setStep(s => s - 1)} disabled={step === 1} className="btn-back">
+              <button onClick={() => setStep(s => s - 1)} disabled={step === 1} className="btn-outline-admin">
                 Previous
               </button>
               <div className="footer-right">
                 {step < 4 ? (
-                  <button onClick={() => setStep(s => s + 1)} className="btn-continue">
+                  <button onClick={() => setStep(s => s + 1)} className="btn-next-admin">
                     Continue to Step {step + 1}
                   </button>
                 ) : (
-                  <button onClick={handleSubmit} disabled={loading} className="btn-publish">
-                    {loading ? 'Processing...' : (isEdit ? 'Update Adventure' : 'Launch Adventure')}
+                  <button onClick={handleSubmit} disabled={loading} className="btn-finish-admin">
+                    {loading ? 'Processing...' : (isEdit ? 'Update Package' : 'Launch Package')}
                   </button>
                 )}
               </div>
             </footer>
           </div>
 
-          {/* Live Preview Sidebar */}
-          <aside className="preview-sidebar">
+          {/* Right: Live Preview */}
+          <aside className="preview-column">
             <div className="preview-sticky">
-              <div className="preview-label"><Eye size={16}/> Live Preview</div>
-              <div className="premium-card">
-                <div className="card-media">
+              <div className="preview-header"><Eye size={16}/> LIVE PREVIEW</div>
+              <div className="preview-card-v2">
+                <div className="preview-media">
                   {formData.cover_image_url ? (
                     <img src={formData.cover_image_url} alt="Preview" />
                   ) : (
-                    <div className="media-placeholder">
-                      <ImageIcon size={40} />
-                      <span>Thumbnail</span>
+                    <div className="media-empty">
+                      <ImageIcon size={48} />
+                      <span>Thumbnail Preview</span>
                     </div>
                   )}
-                  {formData.discount_badge && <div className="card-badge">{formData.discount_badge}</div>}
+                  {formData.discount_badge && <div className="p-badge">{formData.discount_badge}</div>}
                 </div>
-                <div className="card-info">
-                  <span className="card-cat">{formData.category}</span>
-                  <h3 className="card-title">{formData.title || 'Untitled Journey'}</h3>
-                  <div className="card-loc"><MapPin size={14}/> {formData.destination || 'Global'}</div>
-                  <div className="card-stats">
-                    <div className="card-price">₹{formData.price_inr?.toLocaleString() || '0'}</div>
-                    <div className="card-days">{formData.duration_days || '0'} Days</div>
+                <div className="preview-info">
+                  <span className="p-cat">{formData.category}</span>
+                  <h3 className="p-title">{formData.title || 'Your Package Title'}</h3>
+                  <div className="p-loc"><MapPin size={14}/> {formData.destination || 'Destination'}</div>
+                  <div className="p-stats">
+                    <div className="p-price">₹{formData.price_inr?.toLocaleString() || '0'}</div>
+                    <div className="p-days">{formData.duration_days || '0'} Days</div>
                   </div>
                 </div>
+              </div>
+              <div className="preview-tips">
+                <Info size={14}/> Tip: High-quality images convert 3x better.
               </div>
             </div>
           </aside>
@@ -362,62 +387,89 @@ function UploadTripContent() {
       </div>
 
       <style jsx>{`
+        .admin-page-bg { background: #f8fafc; min-height: 100vh; padding-bottom: 80px; font-family: 'Inter', sans-serif; }
         .admin-container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
-        .admin-layout { display: grid; grid-template-columns: 1fr 400px; gap: 40px; align-items: start; }
-        
-        .editor-card { background: white; border-radius: 32px; padding: 50px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); border: 1px solid #E5E7EB; }
-        .editor-header h1 { font-size: 2.2rem; color: #111827; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
-        .editor-header p { color: #6B7280; margin-bottom: 40px; font-size: 1.1rem; }
+        .admin-layout { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
 
-        .stepper-modern { display: flex; gap: 10px; margin-bottom: 50px; background: #F3F4F6; padding: 8px; border-radius: 20px; }
-        .step-item { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px; border-radius: 14px; cursor: pointer; transition: 0.3s; color: #9CA3AF; font-weight: 700; font-size: 0.9rem; }
-        .step-item.active { background: white; color: #111827; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .step-item.completed { color: #10B981; }
-        .step-circle { width: 28px; height: 28px; border-radius: 8px; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
-        
-        .step-title { font-size: 1.4rem; font-weight: 800; color: #111827; margin-bottom: 30px; display: flex; align-items: center; gap: 12px; }
-        
+        .editor-card { background: #fff; border-radius: 24px; padding: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+        .editor-header { margin-bottom: 40px; }
+        .status-badge { display: inline-block; padding: 4px 12px; background: #f1f5f9; color: #64748b; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; }
+        .editor-header h1 { font-size: 2.2rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; letter-spacing: -0.5px; }
+        .editor-header p { color: #64748b; font-size: 1.1rem; }
+
+        /* Stepper */
+        .stepper-v2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 50px; background: #f8fafc; padding: 8px; border-radius: 16px; }
+        .step-box { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.3s; color: #94a3b8; font-weight: 700; }
+        .step-box.active { background: #fff; color: #0f172a; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .step-box.done { color: #10b981; }
+        .step-num { width: 26px; height: 26px; border-radius: 6px; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+
+        /* Form */
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .form-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        .form-group { display: flex; flex-direction: column; gap: 10px; }
         .full-width { grid-column: span 2; }
-        
-        label { font-size: 0.85rem; font-weight: 800; color: #4B5563; text-transform: uppercase; letter-spacing: 0.5px; }
+        label { font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select, textarea { 
-          width: 100%; padding: 16px 20px; border: 2px solid #F3F4F6; border-radius: 16px; 
-          font-size: 1rem; color: #111827; transition: 0.3s; background: #F9FAFB;
+          width: 100%; padding: 14px 18px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
+          font-size: 0.95rem; color: #0f172a; transition: 0.3s; background: #fcfdfe;
         }
-        input:focus, select:focus, textarea:focus { border-color: #E8A020; background: white; outline: none; box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.1); }
+        input:focus, select:focus, textarea:focus { border-color: #E8A020; background: #fff; outline: none; box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.1); }
 
-        .editor-footer { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 40px; border-top: 1px solid #F3F4F6; }
-        .btn-back { padding: 14px 28px; border-radius: 14px; border: 2px solid #E5E7EB; background: white; font-weight: 700; cursor: pointer; transition: 0.3s; color: #6B7280; }
-        .btn-back:hover { border-color: #111827; color: #111827; }
-        .btn-continue { padding: 14px 32px; border-radius: 14px; background: #111827; color: white; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; }
-        .btn-publish { padding: 14px 32px; border-radius: 14px; background: #E8A020; color: white; font-weight: 700; border: none; cursor: pointer; box-shadow: 0 10px 20px rgba(232, 160, 32, 0.2); }
-        .btn-continue:hover, .btn-publish:hover { transform: translateY(-2px); opacity: 0.9; }
+        /* URL Input Area */
+        .url-input-box { position: relative; }
+        .url-preview-mini { position: absolute; right: 8px; top: 8px; bottom: 8px; width: 60px; border-radius: 8px; overflow: hidden; }
+        .url-preview-mini img { width: 100%; height: 100%; object-fit: cover; }
+        .clear-url { position: absolute; inset: 0; background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; }
+        .url-preview-mini:hover .clear-url { opacity: 1; }
 
-        .preview-sidebar { position: sticky; top: 120px; }
-        .preview-label { font-size: 0.8rem; font-weight: 800; color: #9CA3AF; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        
-        .premium-card { background: white; border-radius: 28px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); border: 1px solid #E5E7EB; }
-        .card-media { height: 260px; background: #F3F4F6; position: relative; }
-        .card-media img { width: 100%; height: 100%; object-fit: cover; }
-        .media-placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #D1D5DB; gap: 12px; }
-        .card-badge { position: absolute; top: 20px; left: 20px; background: #E8A020; color: white; padding: 6px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; }
-        
-        .card-info { padding: 24px; }
-        .card-cat { font-size: 0.7rem; font-weight: 900; color: #E8A020; text-transform: uppercase; letter-spacing: 1.5px; }
-        .card-title { font-size: 1.6rem; font-weight: 800; color: #111827; margin: 10px 0; }
-        .card-loc { font-size: 0.9rem; color: #6B7280; display: flex; align-items: center; gap: 6px; margin-bottom: 24px; }
-        .card-stats { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #F3F4F6; padding-top: 20px; }
-        .card-price { font-size: 1.8rem; font-weight: 900; color: #111827; }
-        .card-days { font-size: 0.9rem; font-weight: 700; color: #9CA3AF; }
+        .url-add-group { display: flex; gap: 10px; }
+        .add-btn { background: #0f172a; color: #fff; width: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .gallery-link-previews { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 15px; }
+        .gallery-link-item { position: relative; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .gallery-link-item img { width: 100%; height: 100%; object-fit: cover; }
+        .remove-link { position: absolute; top: 4px; right: 4px; background: rgba(239, 68, 68, 0.9); color: #fff; border-radius: 4px; padding: 2px; }
 
-        @media (max-width: 1200px) { .admin-layout { grid-template-columns: 1fr; } .preview-sidebar { display: none; } }
-        @media (max-width: 768px) { 
-          .editor-card { padding: 30px; border-radius: 24px; }
-          .form-grid { grid-template-columns: 1fr; }
-          .stepper-modern span { display: none; }
-        }
+        /* Tags */
+        .modern-tags-input { border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 10px; background: #fcfdfe; }
+        .tags-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+        .chip { background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .chip button { color: #94a3b8; font-size: 1.2rem; }
+        .modern-tags-input input { border: none; padding: 5px; background: transparent; box-shadow: none; }
+
+        /* Toggle */
+        .toggle-v2 { display: flex; gap: 5px; background: #f1f5f9; padding: 4px; border-radius: 10px; width: fit-content; }
+        .toggle-v2 button { padding: 8px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; transition: 0.3s; color: #64748b; }
+        .toggle-v2 button.active { background: #fff; color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .checkbox-label input { width: 18px; height: 18px; }
+
+        /* Footer */
+        .editor-footer { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 40px; border-top: 1px solid #f1f5f9; }
+        .btn-outline-admin { padding: 14px 28px; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #fff; font-weight: 700; color: #64748b; }
+        .btn-outline-admin:hover { border-color: #0f172a; color: #0f172a; }
+        .btn-next-admin { padding: 14px 32px; border-radius: 12px; background: #0f172a; color: #fff; font-weight: 700; }
+        .btn-finish-admin { padding: 14px 32px; border-radius: 12px; background: #E8A020; color: #fff; font-weight: 700; box-shadow: 0 10px 20px rgba(232, 160, 32, 0.2); }
+
+        /* Preview Sidebar */
+        .preview-sticky { position: sticky; top: 120px; }
+        .preview-header { font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .preview-card-v2 { background: #fff; border-radius: 24px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .preview-media { height: 240px; background: #f8fafc; position: relative; }
+        .preview-media img { width: 100%; height: 100%; object-fit: cover; }
+        .media-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #cbd5e1; gap: 10px; }
+        .p-badge { position: absolute; top: 15px; left: 15px; background: #E8A020; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; }
+        .preview-info { padding: 25px; }
+        .p-cat { font-size: 0.65rem; font-weight: 900; color: #E8A020; text-transform: uppercase; letter-spacing: 1px; }
+        .p-title { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 10px 0; line-height: 1.2; }
+        .p-loc { font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 6px; margin-bottom: 20px; }
+        .p-stats { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 15px; }
+        .p-price { font-size: 1.6rem; font-weight: 900; color: #0f172a; }
+        .p-days { font-size: 0.85rem; font-weight: 700; color: #94a3b8; }
+        .preview-tips { margin-top: 20px; font-size: 0.8rem; color: #64748b; font-style: italic; display: flex; align-items: center; gap: 8px; padding: 0 10px; }
+
+        @media (max-width: 1200px) { .admin-layout { grid-template-columns: 1fr; } .preview-column { display: none; } }
+        @media (max-width: 768px) { .editor-card { padding: 30px; } .form-grid { grid-template-columns: 1fr; } .step-label { display: none; } }
       `}</style>
       <Footer />
     </main>
