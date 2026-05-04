@@ -232,13 +232,14 @@ export default function Home() {
         /* Stats Banner */
         .stats-banner { 
           position: relative; 
-          height: 450px; 
+          min-height: 450px; 
           background: url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1400&q=80'); 
           background-size: cover; 
           background-position: center; 
           display: flex; 
           align-items: center; 
           margin: 80px 0;
+          padding: 60px 0;
         }
         .stats-overlay { position: absolute; inset: 0; background: rgba(13,27,42,0.6); }
         .stats-content { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center; color: #fff; }
