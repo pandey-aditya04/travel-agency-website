@@ -9,21 +9,21 @@ const HeroSlider = () => {
       badge: "✦ Indian Escapes",
       headline: <>Discover <span>India</span>,<br/>Create Memories</>,
       sub: "Seamless travel across India's most breathtaking destinations — curated just for you.",
-      image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=80",
+      image: "https://images.unsplash.com/photo-1524492707947-2f85a64b67ad?auto=format&fit=crop&w=1920&q=80", // Taj Mahal
       link: "/destinations?category=Indian Escapes"
     },
     {
       badge: "✦ Overseas Adventures",
       headline: <>Explore <span>Worlds</span>,<br/>Beyond Boundaries</>,
       sub: "Experience the pinnacle of luxury and adventure in iconic global destinations.",
-      image: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?auto=format&fit=crop&w=1600&q=80",
+      image: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?auto=format&fit=crop&w=1920&q=80", // Venice / Overseas
       link: "/destinations?category=Overseas Adventures"
     },
     {
       badge: "✦ Divine Destinations",
       headline: <>Sacred <span>Journeys</span>,<br/>Divine Peace</>,
       sub: "Find spiritual travel bliss with sacred journeys to India's most divine pilgrimage sites.",
-      image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1600&q=80",
+      image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=80", // Sacred Temple/Ganges
       link: "/destinations?category=Divine Destinations"
     }
   ];

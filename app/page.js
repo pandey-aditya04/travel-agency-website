@@ -201,14 +201,14 @@ export default function Home() {
       </section>
 
       {/* CTA Strip */}
-      <div className="cta-strip">
+      <div className="cta-strip" style={{ background: '#0D1B2A', borderTop: '1px solid rgba(232,160,32,0.2)', padding: '80px 0' }}>
         <div className="container cta-content">
           <div>
-            <h3>Ready to Start Your Journey?</h3>
-            <p>Get expert assistance and exclusive deals 24/7 on WhatsApp.</p>
+            <h3 style={{ color: '#fff', fontSize: '2.5rem' }}>Ready to Start Your Journey?</h3>
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.2rem', marginTop: '10px' }}>Get expert assistance and exclusive deals 24/7 on WhatsApp.</p>
           </div>
-          <a href="https://wa.me/919520235209" className="btn btn-secondary" style={{ backgroundColor: '#0D1B2A', color: '#fff' }}>
-            <MessageSquare size={20} fill="#fff" /> Chat on WhatsApp
+          <a href="https://wa.me/919520235209" className="btn btn-primary" style={{ padding: '16px 35px', fontSize: '1.1rem' }}>
+            <MessageSquare size={20} /> Chat on WhatsApp
           </a>
         </div>
       </div>
