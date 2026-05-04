@@ -329,10 +329,15 @@ export default function Home() {
           .stat-item-v2 h3 { font-size: 2.5rem; }
         }
         @media (max-width: 600px) {
-          .landscape-grid { grid-template-columns: 1fr; }
-          .title-v2 { font-size: 2rem; }
+          .landscape-grid { grid-template-columns: 1fr; gap: 15px; }
+          .title-v2 { font-size: clamp(1.5rem, 6vw, 2.2rem); }
+          .section-padding { padding: 60px 5vw; }
           .stats-content { grid-template-columns: 1fr; }
-          .video-content h2 { font-size: 2.2rem; }
+          .stat-item-v2 h3 { font-size: 2.2rem; }
+          .video-content h2 { font-size: 1.8rem; }
+          .divine-header h2 { font-size: 2rem; }
+          .why-left h2 { font-size: 2rem; }
+          .section-header-v2 { flex-direction: column; align-items: flex-start; gap: 15px; }
         }
       `}</style>
     </main>

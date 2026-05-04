@@ -350,12 +350,14 @@ export default function UploadPage({ params }) {
             background: '#FFFFFF',
             borderRadius: '20px',
             border: '1px solid #E5E7EB',
-            padding: 'clamp(24px, 5vw, 48px)',
+            padding: 'clamp(16px, 5vw, 48px)',
             boxShadow: '0 4px 24px rgba(13,27,42,0.04)'
-          }}>
-            <StepIndicator currentStep={step} />
+          }} className="form-card-mobile">
+            <div style={{ overflowX: 'auto', marginBottom: '10px' }}>
+              <StepIndicator currentStep={step} />
+            </div>
 
-            <div style={{ minHeight: '400px' }}>
+            <div style={{ minHeight: '300px' }}>
               {renderStep()}
             </div>
 
@@ -479,6 +481,20 @@ export default function UploadPage({ params }) {
         @media (max-width: 900px) {
           .upload-grid { grid-template-columns: 1fr !important; }
           .preview-sticky { position: static !important; margin-top: 40px; }
+        }
+
+        @media (max-width: 600px) {
+          .upload-grid div[style*="gridTemplateColumns: 1fr 1fr"] { 
+            grid-template-columns: 1fr !important; 
+          }
+          .upload-grid div[style*="display: flex; justify-content: space-between"] {
+            flex-direction: column-reverse !important;
+            gap: 15px;
+          }
+          .upload-grid div[style*="display: flex; gap: 12px"] {
+            width: 100%;
+          }
+          .upload-grid button { width: 100%; }
         }
       `}</style>
     </div>

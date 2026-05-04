@@ -172,9 +172,12 @@ const HeroSlider = () => {
         }
 
         @media (max-width: 768px) {
-          .hero-content { text-align: left; }
-          .hero-actions { flex-direction: column; width: 100%; }
-          .hero-actions > :global(a), .hero-actions > button { width: 100%; justify-content: center; }
+          .hero-content { text-align: left; padding: 0 6vw; }
+          .hero-title { font-size: clamp(2.2rem, 10vw, 3rem); line-height: 1.2; margin-bottom: 15px; }
+          .hero-sub { font-size: 0.95rem; margin-bottom: 25px; }
+          .hero-badge { font-size: 0.7rem; padding: 4px 12px; margin-bottom: 15px; }
+          .hero-actions { flex-direction: column; width: 100%; gap: 10px; }
+          .hero-actions > :global(a), .hero-actions > button { width: 100%; justify-content: center; padding: 11px; }
         }
       `}</style>
     </section>
