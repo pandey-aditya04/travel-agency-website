@@ -262,7 +262,5 @@ export default function PackagePage({ params }) {
         }
       `}</style>
     </main>
-      `}</style>
-    </main>
   );
 }
