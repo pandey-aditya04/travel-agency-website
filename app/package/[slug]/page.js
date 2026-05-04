@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, use } from 'react';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -246,11 +247,12 @@ export default function PackagePage({ params }) {
         input:focus { border-color: #ff6a35; background: #fff; }
 
         .pax-group { margin-bottom: 25px; }
-        .stepper { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+        .stepper { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
         .stepper span { font-size: 0.85rem; color: #444; font-weight: 500; }
-        .controls { display: flex; align-items: center; gap: 12px; }
-        .controls button { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; background: #fff; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #999; }
-        .controls span { width: 20px; text-align: center; font-weight: 700; color: #333; }
+        .controls { display: flex; align-items: center; gap: 16px; }
+        .controls button { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #ddd; background: #fff; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #333; transition: 0.2s; }
+        .controls button:hover { border-color: #ff6a35; color: #ff6a35; }
+        .controls span { width: 24px; text-align: center; font-weight: 700; color: #333; font-size: 1rem; }
 
         .quote-btn { width: 100%; background: #ff6a35; color: #fff; border: none; padding: 15px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 15px rgba(255,106,53,0.3); }
         .quote-btn:hover { background: #e85a2a; transform: translateY(-2px); }

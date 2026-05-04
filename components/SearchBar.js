@@ -200,13 +200,15 @@ const SearchBar = () => {
         }
 
         @media (max-width: 1024px) {
-          .search-card { grid-template-columns: 1fr 1fr; }
+          .search-card { grid-template-columns: 1fr 1fr; margin-top: -40px; }
           .search-action { grid-column: span 2; }
         }
         
         @media (max-width: 600px) {
-          .search-card { grid-template-columns: 1fr; padding: 24px; margin-top: -30px; }
-          .search-action { grid-column: span 1; }
+          .search-card { grid-template-columns: 1fr; padding: 20px; margin-top: -20px; gap: 15px; }
+          .search-action { grid-column: span 1; margin-top: 5px; }
+          .search-field label { font-size: 0.7rem; }
+          .search-input, .stepper-wrap, .search-submit { height: 40px; font-size: 0.85rem; }
         }
       `}</style>
     </div>

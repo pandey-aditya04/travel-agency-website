@@ -309,3 +309,32 @@ h1, h2, h3, h4 {
 .card-duration { font-size: .8rem; color: #637085; background: #F7F4EF; padding: 4px 12px; border-radius: 20px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
 .card-btn { width: 100%; background: #0D1B2A; color: #fff; font-size: .85rem; font-weight: 600; padding: 12px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s ease; }
 .trip-card:hover .card-btn { background: var(--primary-color); color: #0D1B2A; }
+/* Prevent horizontal scroll */
+html, body { overflow-x: hidden; }
+
+/* Admin upload responsive */
+@media (max-width: 900px) {
+  .upload-two-col {
+    grid-template-columns: 1fr !important;
+  }
+  .preview-panel {
+    position: static !important;
+    top: auto !important;
+  }
+}
+
+/* Step indicator responsive */
+@media (max-width: 540px) {
+  .step-label { display: none; }
+  .step-connector { flex: 0.5 !important; }
+}
+
+/* Form grid responsive */
+@media (max-width: 540px) {
+  .form-two-col {
+    grid-template-columns: 1fr !important;
+  }
+  .form-full-span {
+    grid-column: 1 !important;
+  }
+}

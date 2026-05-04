@@ -59,16 +59,16 @@ export default function Destinations() {
           margin-bottom: 60px;
           margin-top: 80px;
         }
-        .dest-hero .hero-overlay { position: absolute; inset: 0; background: rgba(13,27,42,0.6); }
+        .dest-hero .hero-overlay { position: absolute; inset: 0; background: rgba(13,27,42,0.75); }
         .dest-hero .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; }
-        .dest-hero h1 { font-size: 4rem; font-weight: 800; margin-bottom: 10px; }
-        .dest-hero p { font-size: 1.2rem; opacity: 0.8; }
+        .dest-hero h1 { font-size: clamp(2rem, 8vw, 4rem); font-weight: 800; margin-bottom: 10px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .dest-hero p { font-size: 1.2rem; opacity: 0.9; }
 
         .grid-wrapper { padding: 0 5vw; }
         
         .dest-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 25px;
         }
 
@@ -79,19 +79,20 @@ export default function Destinations() {
           overflow: hidden;
           background: #1A2D42;
           box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+          border: 1px solid rgba(255,255,255,0.05);
         }
 
         .dest-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          opacity: 0.6;
-          transition: 0.5s;
+          opacity: 0.7;
+          transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .dest-card:hover .dest-img {
           transform: scale(1.1);
-          opacity: 0.4;
+          opacity: 0.5;
         }
 
         .dest-overlay {
@@ -101,35 +102,35 @@ export default function Destinations() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 20px;
-          background: linear-gradient(to top, rgba(13,27,42,0.8), transparent);
+          padding: 30px;
+          background: linear-gradient(to top, rgba(13,27,42,0.9) 0%, transparent 60%);
         }
 
         .dest-name {
           color: #fff;
-          font-size: 1.2rem;
-          font-weight: 700;
+          font-size: 1.5rem;
+          font-weight: 800;
           margin-bottom: 20px;
           text-align: center;
+          letter-spacing: -0.5px;
         }
 
         .explore-btn {
-          padding: 8px 24px;
-          border: 1px solid rgba(255,255,255,0.4);
-          border-radius: 4px;
-          color: #fff;
-          font-size: 0.85rem;
-          font-weight: 600;
+          padding: 10px 30px;
+          background: var(--primary-color, #E8A020);
+          border-radius: 6px;
+          color: #0D1B2A;
+          font-size: 0.9rem;
+          font-weight: 700;
           text-decoration: none;
           transition: 0.3s;
-          background: rgba(255,255,255,0.05);
-          backdrop-filter: blur(5px);
+          box-shadow: 0 4px 15px rgba(232, 160, 32, 0.3);
         }
 
         .explore-btn:hover {
-          background: #fff;
-          color: #0D1B2A;
-          border-color: #fff;
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(232, 160, 32, 0.4);
+          background: #F5C35A;
         }
 
         @media (max-width: 1024px) {

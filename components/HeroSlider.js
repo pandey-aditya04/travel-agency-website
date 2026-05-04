@@ -167,6 +167,10 @@ const HeroSlider = () => {
           100% { transform: translateY(200%); }
         }
 
+        @media (max-width: 1024px) {
+          .scroll-hint { display: none; }
+        }
+
         @media (max-width: 768px) {
           .hero-content { text-align: left; }
           .hero-actions { flex-direction: column; width: 100%; }

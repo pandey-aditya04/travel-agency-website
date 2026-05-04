@@ -1,21 +1,72 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import AdminNavbar from '@/components/AdminNavbar';
-import Footer from '@/components/Footer';
+import { useState, useEffect, use } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Upload, Check, Info, List, Settings, Image as ImageIcon, Eye, Plus, Trash2, MapPin } from 'lucide-react';
+import AdminNavbar from '@/components/admin/AdminNavbar';
+import StepIndicator from '@/components/admin/StepIndicator';
+import { FormField, inputStyle, inputFocusStyle } from '@/components/admin/FormField';
+import { 
+  Check, Info, Image as ImageIcon, List, Settings, 
+  MapPin, Eye, Plus, Trash2, ChevronRight 
+} from 'lucide-react';
 
-function UploadTripContent() {
-  const searchParams = useSearchParams();
-  const editId = searchParams.get('id');
+function FocusInput({ style, ...props }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <input
+      {...props}
+      style={{ ...inputStyle, ...(focused ? inputFocusStyle : {}), ...style }}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+    />
+  );
+}
+
+function FocusSelect({ children, ...props }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <select
+      {...props}
+      style={{
+        ...inputStyle,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235E7A94' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'right 14px center',
+        paddingRight: '36px',
+        appearance: 'none',
+        cursor: 'pointer',
+        ...(focused ? inputFocusStyle : {})
+      }}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+    >
+      {children}
+    </select>
+  );
+}
+
+function FocusTextarea({ style, ...props }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <textarea
+      {...props}
+      style={{ ...inputStyle, minHeight: '100px', resize: 'vertical', ...(focused ? inputFocusStyle : {}), ...style }}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+    />
+  );
+}
+
+export default function UploadPage({ params }) {
+  const resolvedParams = use(params || {});
+  const editId = resolvedParams?.id || (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : null);
   
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     title: '',
+    slug: '',
     category: 'Indian Escapes',
     destination: '',
     duration_days: '',
@@ -30,8 +81,7 @@ function UploadTripContent() {
     highlights: [],
     status: 'Draft',
     featured: false,
-    discount_badge: '',
-    slug: ''
+    discount_badge: ''
   });
 
   useEffect(() => {
@@ -50,12 +100,11 @@ function UploadTripContent() {
       .single();
     
     if (data) {
-      // If itinerary is an array, convert to string for the textarea
       let itineraryStr = data.itinerary;
       if (Array.isArray(data.itinerary)) {
         itineraryStr = data.itinerary.map(item => `Day ${item.day}: ${item.title}\n${item.description}`).join('\n\n');
       }
-      setFormData({ ...data, itinerary: itineraryStr });
+      setFormData({ ...data, itinerary: itineraryStr || '' });
     }
     setLoading(false);
   };
@@ -86,16 +135,9 @@ function UploadTripContent() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    
     try {
       const endpoint = '/api/admin/packages';
       const method = isEdit ? 'PUT' : 'POST';
-      
-      // Convert itinerary string back to array if possible, or keep as string
-      // The current schema might expect a string or an array. 
-      // Most of our previous code used arrays for the frontend display.
-      // We'll send it as is for now, but ensure it's not broken.
-      
       const payload = isEdit ? { ...formData, id: editId } : formData;
 
       const res = await fetch(endpoint, {
@@ -105,7 +147,6 @@ function UploadTripContent() {
       });
 
       const result = await res.json();
-      
       if (!res.ok) throw new Error(result.error || 'Failed to save');
 
       alert(isEdit ? 'Changes saved successfully!' : 'Package published successfully!');
@@ -122,161 +163,152 @@ function UploadTripContent() {
     switch(step) {
       case 1:
         return (
-          <div className="animate-fade">
-            <h3 className="step-title"><Info size={24} /> Step 1: Basic Details</h3>
-            <div className="form-grid">
-              <div className="admin-form-group full-width">
-                <label>Package Title</label>
-                <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Magical Kerala Backwaters" required />
+          <div className="step-content-anim">
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '20px', color: '#0D1B2A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Info size={20} color="#E8A020" /> Step 1: Basic Details
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <FormField label="Package Title" required>
+                  <FocusInput name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Magical Kerala Backwaters Tour" />
+                </FormField>
               </div>
-              <div className="admin-form-group">
-                <label>Category</label>
-                <select name="category" value={formData.category} onChange={handleChange}>
+              <FormField label="Category" required>
+                <FocusSelect name="category" value={formData.category} onChange={handleChange}>
                   <option value="Indian Escapes">Indian Escapes</option>
                   <option value="Overseas Adventures">Overseas Adventures</option>
                   <option value="Divine Destinations">Divine Destinations</option>
                 </select>
-              </div>
-              <div className="admin-form-group">
-                <label>Destination</label>
-                <input type="text" name="destination" value={formData.destination} onChange={handleChange} placeholder="e.g. Munnar & Alleppey, Kerala" required />
-              </div>
-              <div className="admin-form-group">
-                <label>Duration (Days)</label>
-                <input type="number" name="duration_days" value={formData.duration_days} onChange={handleChange} placeholder="5" required />
-              </div>
-              <div className="admin-form-group">
-                <label>Price (INR)</label>
-                <input type="number" name="price_inr" value={formData.price_inr} onChange={handleChange} placeholder="24999" required />
-              </div>
-              <div className="admin-form-group">
-                <label>Original Price (Optional)</label>
-                <input type="number" name="original_price_inr" value={formData.original_price_inr} onChange={handleChange} placeholder="32000" />
+              </FormField>
+              <FormField label="Destination" required>
+                <FocusInput name="destination" value={formData.destination} onChange={handleChange} placeholder="e.g. Alleppey, Kerala" />
+              </FormField>
+              <FormField label="Duration (Days)" required>
+                <FocusInput type="number" name="duration_days" value={formData.duration_days} onChange={handleChange} placeholder="5" />
+              </FormField>
+              <FormField label="Price (INR)" required>
+                <FocusInput type="number" name="price_inr" value={formData.price_inr} onChange={handleChange} placeholder="24999" />
+              </FormField>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <FormField label="Original Price (Optional)" hint="Shown as strikethrough for discounts">
+                  <FocusInput type="number" name="original_price_inr" value={formData.original_price_inr} onChange={handleChange} placeholder="32000" />
+                </FormField>
               </div>
             </div>
           </div>
         );
       case 2:
         return (
-          <div className="animate-fade">
-            <h3 className="step-title"><ImageIcon size={24} /> Step 2: Media Links</h3>
-            <div className="media-link-area">
-              <div className="admin-form-group">
-                <label>Cover Image URL (Thumbnail)</label>
-                <div className="url-input-box">
-                  <input 
-                    type="text" 
-                    name="cover_image_url" 
-                    value={formData.cover_image_url} 
-                    onChange={handleChange} 
-                    placeholder="Paste image URL here (https://...)" 
-                  />
-                  {formData.cover_image_url && (
-                    <div className="url-preview-mini">
-                      <img src={formData.cover_image_url} alt="Cover Preview" />
-                      <button onClick={() => setFormData({...formData, cover_image_url: ''})} className="clear-url"><Trash2 size={14}/></button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="admin-form-group" style={{ marginTop: '30px' }}>
-                <label>Add Gallery Image URL</label>
-                <div className="url-add-group">
-                  <input 
-                    type="text" 
-                    id="new-gallery-url" 
-                    placeholder="Paste gallery image URL..." 
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        setFormData({...formData, gallery_urls: [...formData.gallery_urls, e.target.value]});
-                        e.target.value = '';
-                      }
-                    }}
-                  />
-                  <button className="add-btn" onClick={() => {
+          <div className="step-content-anim">
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '20px', color: '#0D1B2A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ImageIcon size={20} color="#E8A020" /> Step 2: Media Links
+            </h3>
+            <FormField label="Cover Image URL" hint="Main thumbnail for the package card">
+              <FocusInput name="cover_image_url" value={formData.cover_image_url} onChange={handleChange} placeholder="https://images.unsplash.com/..." />
+            </FormField>
+            
+            <div style={{ marginTop: '30px' }}>
+              <label style={{ fontSize: '0.78rem', fontWeight: '600', color: '#374151', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Gallery Images</label>
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+                <FocusInput id="new-gallery-url" placeholder="Paste gallery image URL..." style={{ flex: 1 }} onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setFormData({...formData, gallery_urls: [...formData.gallery_urls, e.target.value]});
+                    e.target.value = '';
+                  }
+                }} />
+                <button 
+                  onClick={() => {
                     const el = document.getElementById('new-gallery-url');
                     if (el.value) {
                       setFormData({...formData, gallery_urls: [...formData.gallery_urls, el.value]});
                       el.value = '';
                     }
-                  }}><Plus size={20}/></button>
-                </div>
-                <div className="gallery-link-previews">
-                  {formData.gallery_urls.map((url, i) => (
-                    <div key={i} className="gallery-link-item">
-                      <img src={url} alt="Gallery" />
-                      <button onClick={() => setFormData({...formData, gallery_urls: formData.gallery_urls.filter((_, idx) => idx !== i)})} className="remove-link"><Trash2 size={12}/></button>
-                    </div>
-                  ))}
-                </div>
+                  }}
+                  style={{ background: '#0D1B2A', color: '#fff', padding: '0 20px', borderRadius: '8px', fontWeight: 600 }}
+                >Add</button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
+                {formData.gallery_urls.map((url, i) => (
+                  <div key={i} style={{ position: 'relative', height: '100px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #E5E7EB' }}>
+                    <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Gallery" />
+                    <button 
+                      onClick={() => setFormData({...formData, gallery_urls: formData.gallery_urls.filter((_, idx) => idx !== i)})}
+                      style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(239,68,68,0.9)', color: '#fff', borderRadius: '4px', padding: '2px' }}
+                    ><Trash2 size={12}/></button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         );
       case 3:
         return (
-          <div className="animate-fade">
-            <h3 className="step-title"><List size={24} /> Step 3: Package Content</h3>
-            <div className="content-area">
-              <div className="admin-form-group" style={{ marginBottom: '24px' }}>
-                <label>Short Description (Hero Intro)</label>
-                <textarea name="short_description" value={formData.short_description} onChange={handleChange} rows="3" placeholder="Briefly describe the trip's vibe..."></textarea>
-              </div>
-              <div className="admin-form-group" style={{ marginBottom: '24px' }}>
-                <label>Detailed Itinerary (Text Format)</label>
-                <textarea name="itinerary" value={formData.itinerary} onChange={handleChange} rows="6" placeholder="Day 1: Arrival...&#10;Day 2: Exploration..."></textarea>
-              </div>
-              <div className="form-grid">
-                <div className="admin-form-group">
-                  <label>What's Included</label>
-                  <textarea name="inclusions" value={formData.inclusions} onChange={handleChange} rows="4" placeholder="Breakfast, Hotel, Guide..."></textarea>
-                </div>
-                <div className="admin-form-group">
-                  <label>What's Excluded</label>
-                  <textarea name="exclusions" value={formData.exclusions} onChange={handleChange} rows="4" placeholder="Flights, Personal expenses..."></textarea>
-                </div>
-              </div>
-              <div className="admin-form-group" style={{ marginTop: '24px' }}>
-                <label>Highlights (Press Enter to add tags)</label>
-                <div className="modern-tags-input">
-                  <div className="tags-chips">
+          <div className="step-content-anim">
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '20px', color: '#0D1B2A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <List size={20} color="#E8A020" /> Step 3: Package Content
+            </h3>
+            <FormField label="Short Description" hint="Shown on trip cards and hover">
+              <FocusTextarea name="short_description" value={formData.short_description} onChange={handleChange} rows="3" placeholder="A brief, catchy summary..." />
+            </FormField>
+            <FormField label="Detailed Itinerary" hint="Day-by-day breakdown (text format)">
+              <FocusTextarea name="itinerary" value={formData.itinerary} onChange={handleChange} rows="6" placeholder="Day 1: Arrival...&#10;Day 2: Sightseeing..." />
+            </FormField>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <FormField label="Inclusions">
+                <FocusTextarea name="inclusions" value={formData.inclusions} onChange={handleChange} rows="4" placeholder="Breakfast, Hotel, Guide..." />
+              </FormField>
+              <FormField label="Exclusions">
+                <FocusTextarea name="exclusions" value={formData.exclusions} onChange={handleChange} rows="4" placeholder="Flights, Personal expenses..." />
+              </FormField>
+            </div>
+            <div style={{ marginTop: '10px' }}>
+              <FormField label="Highlights" hint="Press Enter to add tags">
+                <div style={{ border: '1.5px solid #E5E7EB', borderRadius: '8px', padding: '8px', background: '#FAFAFA' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
                     {formData.highlights.map((tag, i) => (
-                      <span key={i} className="chip">{tag} <button onClick={() => removeHighlight(i)}>×</button></span>
+                      <span key={i} style={{ background: '#E8A020', color: '#0D1B2A', padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {tag} <button onClick={() => removeHighlight(i)} style={{ background: 'none', border: 'none', color: '#0D1B2A', cursor: 'pointer', fontSize: '1rem' }}>×</button>
+                      </span>
                     ))}
                   </div>
-                  <input type="text" onKeyDown={handleHighlightEnter} placeholder="e.g. Free Breakfast" />
+                  <input 
+                    type="text" 
+                    onKeyDown={handleHighlightEnter} 
+                    placeholder="e.g. Free Breakfast" 
+                    style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: '0.9rem' }}
+                  />
                 </div>
-              </div>
+              </FormField>
             </div>
           </div>
         );
       case 4:
         return (
-          <div className="animate-fade">
-            <h3 className="step-title"><Settings size={24} /> Step 4: Final Settings</h3>
-            <div className="settings-area">
-              <div className="settings-grid">
-                <div className="admin-form-group">
-                  <label>Package Status</label>
-                  <div className="toggle-v2">
-                    <button onClick={() => setFormData({...formData, status: 'Draft'})} className={formData.status === 'Draft' ? 'active' : ''}>Draft</button>
-                    <button onClick={() => setFormData({...formData, status: 'Published'})} className={formData.status === 'Published' ? 'active' : ''}>Published</button>
-                  </div>
+          <div className="step-content-anim">
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '20px', color: '#0D1B2A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Settings size={20} color="#E8A020" /> Step 4: Final Settings
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <FormField label="Status">
+                <div style={{ display: 'flex', gap: '8px', background: '#F3F4F6', padding: '4px', borderRadius: '8px', width: 'fit-content' }}>
+                  <button 
+                    onClick={() => setFormData({...formData, status: 'Draft'})} 
+                    style={{ padding: '8px 20px', borderRadius: '6px', border: 'none', cursor: 'pointer', background: formData.status === 'Draft' ? '#fff' : 'transparent', fontWeight: 600, color: formData.status === 'Draft' ? '#0D1B2A' : '#6B7280', boxShadow: formData.status === 'Draft' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}
+                  >Draft</button>
+                  <button 
+                    onClick={() => setFormData({...formData, status: 'Published'})} 
+                    style={{ padding: '8px 20px', borderRadius: '6px', border: 'none', cursor: 'pointer', background: formData.status === 'Published' ? '#fff' : 'transparent', fontWeight: 600, color: formData.status === 'Published' ? '#0D1B2A' : '#6B7280', boxShadow: formData.status === 'Published' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}
+                  >Published</button>
                 </div>
-                <div className="admin-form-group">
-                  <label>Discount Badge (Text)</label>
-                  <input type="text" name="discount_badge" value={formData.discount_badge} onChange={handleChange} placeholder="e.g. 20% OFF" />
-                </div>
-                <div className="admin-form-group flex-row">
-                  <label className="checkbox-label">
-                    <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} />
-                    <span>Featured on Homepage</span>
-                  </label>
-                </div>
-              </div>
-              <div className="final-actions">
-                <p className="summary-info">Your package will be saved as <strong>{formData.status}</strong>.</p>
+              </FormField>
+              <FormField label="Badge Text" hint="e.g. Best Seller, 20% OFF">
+                <FocusInput name="discount_badge" value={formData.discount_badge} onChange={handleChange} placeholder="Best Seller" />
+              </FormField>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '15px', background: '#F9FAFB', borderRadius: '12px', border: '1.5px solid #E5E7EB' }}>
+                  <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} style={{ width: '18px', height: '18px' }} />
+                  <span style={{ fontWeight: 600, color: '#0D1B2A' }}>Feature this package on the homepage</span>
+                </label>
               </div>
             </div>
           </div>
@@ -287,208 +319,168 @@ function UploadTripContent() {
   };
 
   return (
-    <main className="admin-page-bg">
+    <div style={{ minHeight: '100vh', background: '#F9FAFB' }}>
       <AdminNavbar />
       
-      <div className="admin-container">
-        <div className="admin-layout">
-          {/* Left: Multi-step Form */}
-          <div className="editor-card">
-            <header className="editor-header">
-              <div className="header-top">
-                <div className="status-badge">{isEdit ? 'Editing Package' : 'New Package'}</div>
-                {isEdit && (
-                  <button onClick={handleSubmit} disabled={loading} className="quick-save-btn">
-                    {loading ? 'Saving...' : 'Quick Save Changes'}
-                  </button>
-                )}
-              </div>
-              <h1>{isEdit ? 'Refine Your Journey' : 'Craft a New Adventure'}</h1>
-              <p>Design a compelling travel experience that will wow your customers.</p>
-            </header>
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: 'clamp(20px, 4vw, 40px) clamp(16px, 4vw, 32px)',
+        paddingTop: '90px'
+      }}>
+        {/* Page Header */}
+        <div style={{ marginBottom: '32px' }}>
+          <p style={{ fontSize: '0.78rem', fontWeight: 600, color: '#E8A020', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>Admin Panel</p>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', fontWeight: 800, color: '#0D1B2A', letterSpacing: '-0.5px' }}>
+            {isEdit ? 'Refine Your Journey' : 'Craft a New Adventure'}
+          </h1>
+          <p style={{ color: '#6B7280', fontSize: '1.05rem', marginTop: '4px' }}>Design a compelling travel experience that will wow your customers.</p>
+        </div>
 
-            <div className="stepper-v2">
-              {[1, 2, 3, 4].map(s => (
-                <div key={s} className={`step-box ${step === s ? 'active' : ''} ${step > s ? 'done' : ''}`} onClick={() => setStep(s)}>
-                  <div className="step-num">{step > s ? <Check size={16}/> : s}</div>
-                  <div className="step-label">Step {s}</div>
-                </div>
-              ))}
-            </div>
+        {/* Two Column Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) 380px',
+          gap: '32px',
+          alignItems: 'start'
+        }} className="upload-grid">
+          
+          {/* Form Card */}
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1px solid #E5E7EB',
+            padding: 'clamp(24px, 5vw, 48px)',
+            boxShadow: '0 4px 24px rgba(13,27,42,0.04)'
+          }}>
+            <StepIndicator currentStep={step} />
 
-            <div className="form-container-body">
+            <div style={{ minHeight: '400px' }}>
               {renderStep()}
             </div>
 
-            <footer className="editor-footer">
-              <button onClick={() => setStep(s => s - 1)} disabled={step === 1} className="btn-outline-admin">
-                Previous
-              </button>
-              <div className="footer-right">
+            {/* Navigation */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              marginTop: '48px', 
+              paddingTop: '32px', 
+              borderTop: '1px solid #F3F4F6' 
+            }}>
+              <button
+                onClick={() => setStep(s => Math.max(1, s - 1))}
+                disabled={step === 1}
+                style={{
+                  padding: '12px 28px',
+                  border: '1.5px solid #E5E7EB',
+                  borderRadius: '10px',
+                  background: 'white',
+                  color: '#4B5563',
+                  fontWeight: '600',
+                  cursor: step === 1 ? 'not-allowed' : 'pointer',
+                  opacity: step === 1 ? 0.4 : 1,
+                  transition: '0.2s'
+                }}
+              >← Previous</button>
+
+              <div style={{ display: 'flex', gap: '12px' }}>
+                {isEdit && (
+                  <button 
+                    onClick={handleSubmit} 
+                    disabled={loading}
+                    style={{ padding: '12px 24px', background: '#10b981', color: '#fff', borderRadius: '10px', fontWeight: 600 }}
+                  >{loading ? 'Saving...' : 'Quick Save'}</button>
+                )}
                 {step < 4 ? (
-                  <button onClick={() => setStep(s => s + 1)} className="btn-next-admin">
-                    Continue to Step {step + 1}
-                  </button>
+                  <button
+                    onClick={() => setStep(s => s + 1)}
+                    style={{
+                      padding: '12px 32px',
+                      background: '#0D1B2A',
+                      color: '#E8A020',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      fontSize: '0.95rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >Continue to Step {step + 1} <ChevronRight size={18}/></button>
                 ) : (
-                  <button onClick={handleSubmit} disabled={loading} className="btn-finish-admin">
-                    {loading ? 'Processing...' : (isEdit ? 'Save Changes' : 'Launch Package')}
-                  </button>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    style={{
+                      padding: '12px 32px',
+                      background: '#E8A020',
+                      color: '#0D1B2A',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontWeight: '800',
+                      cursor: 'pointer',
+                      fontSize: '0.95rem',
+                      boxShadow: '0 10px 20px rgba(232, 160, 32, 0.2)'
+                    }}
+                  >✦ {isEdit ? 'Update Package' : 'Publish Package'}</button>
                 )}
               </div>
-            </footer>
+            </div>
           </div>
 
-          {/* Right: Live Preview */}
-          <aside className="preview-column">
-            <div className="preview-sticky">
-              <div className="preview-header"><Eye size={16}/> LIVE PREVIEW</div>
-              <div className="preview-card-v2">
-                <div className="preview-media">
-                  {formData.cover_image_url ? (
-                    <img src={formData.cover_image_url} alt="Preview" />
-                  ) : (
-                    <div className="media-empty">
-                      <ImageIcon size={48} />
-                      <span>Thumbnail Preview</span>
-                    </div>
-                  )}
-                  {formData.discount_badge && <div className="p-badge">{formData.discount_badge}</div>}
-                </div>
-                <div className="preview-info">
-                  <span className="p-cat">{formData.category}</span>
-                  <h3 className="p-title">{formData.title || 'Your Package Title'}</h3>
-                  <div className="p-loc"><MapPin size={14}/> {formData.destination || 'Destination'}</div>
-                  <div className="p-stats">
-                    <div className="p-price">₹{formData.price_inr?.toLocaleString() || '0'}</div>
-                    <div className="p-days">{formData.duration_days || '0'} Days</div>
+          {/* Preview Panel */}
+          <aside style={{ position: 'sticky', top: '90px' }} className="preview-sticky">
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#94A3B8', fontWeight: 800, fontSize: '0.75rem', letterSpacing: '1px', textTransform: 'uppercase' }}>
+              <Eye size={16} /> Live Preview
+            </div>
+            
+            <div style={{ background: '#fff', borderRadius: '20px', border: '1px solid #E5E7EB', overflow: 'hidden', boxShadow: '0 20px 40px rgba(13,27,42,0.06)' }}>
+              <div style={{ height: '220px', background: '#F3F4F6', position: 'relative' }}>
+                {formData.cover_image_url ? (
+                  <img src={formData.cover_image_url} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#CBD5E1', gap: '10px' }}>
+                    <ImageIcon size={48} />
+                    <span>Card Thumbnail</span>
                   </div>
+                )}
+                {formData.discount_badge && (
+                  <div style={{ position: 'absolute', top: '15px', left: '15px', background: '#E8A020', color: '#0D1B2A', padding: '4px 12px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 800 }}>
+                    {formData.discount_badge}
+                  </div>
+                )}
+              </div>
+              <div style={{ padding: '24px' }}>
+                <span style={{ fontSize: '0.65rem', fontWeight: 900, color: '#E8A020', textTransform: 'uppercase', letterSpacing: '1px' }}>{formData.category}</span>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0D1B2A', margin: '8px 0', lineHeight: 1.2 }}>{formData.title || 'Your Trip Title'}</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748B', fontSize: '0.85rem', marginBottom: '20px' }}>
+                  <MapPin size={14} /> {formData.destination || 'Destination Name'}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '15px', borderTop: '1px solid #F3F4F6' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0D1B2A' }}>₹{formData.price_inr?.toLocaleString() || '0'}</div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#94A3B8' }}>{formData.duration_days || '0'} Days</div>
                 </div>
               </div>
-              <div className="preview-tips">
-                <Info size={14}/> Tip: High-quality images convert 3x better.
-              </div>
+            </div>
+            
+            <div style={{ marginTop: '20px', padding: '15px', background: '#EFF6FF', borderRadius: '12px', color: '#1E40AF', fontSize: '0.8rem', display: 'flex', gap: '10px' }}>
+              <Info size={16} style={{ flexShrink: 0 }} />
+              <p>Trip cards with high-quality landscape images have <strong>300% higher click rates</strong>.</p>
             </div>
           </aside>
         </div>
       </div>
 
-      <style jsx>{`
-        .admin-page-bg { background: #f8fafc !important; min-height: 100vh; padding-bottom: 80px; font-family: 'Inter', sans-serif; }
-        .admin-container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
-        .admin-layout { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
-
-        .editor-card { background: #fff; border-radius: 24px; padding: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
-        .editor-header { margin-bottom: 40px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .status-badge { display: inline-block; padding: 4px 12px; background: #f1f5f9; color: #64748b; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-        .quick-save-btn { background: #10b981; color: #fff; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
-        .quick-save-btn:hover { background: #059669; transform: translateY(-2px); }
+      <style jsx global>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .step-content-anim { animation: fadeIn 0.4s ease forwards; }
         
-        .editor-header h1 { font-size: 2.2rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; letter-spacing: -0.5px; }
-        .editor-header p { color: #64748b; font-size: 1.1rem; }
-
-        /* Stepper */
-        .stepper-v2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 50px; background: #f8fafc; padding: 8px; border-radius: 16px; }
-        .step-box { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.3s; color: #94a3b8; font-weight: 700; }
-        .step-box.active { background: #fff; color: #0f172a; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .step-box.done { color: #10b981; }
-        .step-num { width: 26px; height: 26px; border-radius: 6px; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
-
-        /* Form */
-        .form-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
-        .admin-form-group { display: block !important; margin-bottom: 20px !important; width: 100% !important; }
-        .full-width { grid-column: span 2 !important; }
-        
-        label { 
-          display: block !important;
-          font-size: 0.8rem !important; 
-          font-weight: 700 !important; 
-          color: #475569 !important; 
-          text-transform: uppercase !important; 
-          letter-spacing: 0.5px !important; 
-          margin-bottom: 8px !important; 
+        @media (max-width: 900px) {
+          .upload-grid { grid-template-columns: 1fr !important; }
+          .preview-sticky { position: static !important; margin-top: 40px; }
         }
-        
-        input, select, textarea { 
-          display: block !important;
-          width: 100% !important; 
-          padding: 14px 18px !important; 
-          border: 1.5px solid #e2e8f0 !important; 
-          border-radius: 12px !important; 
-          font-size: 0.95rem !important; 
-          color: #0f172a !important; 
-          background: #fcfdfe !important;
-          min-height: 52px !important;
-          outline: none !important;
-        }
-        textarea { height: auto !important; min-height: 120px !important; }
-        input:focus, select:focus, textarea:focus { border-color: #E8A020 !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(232, 160, 32, 0.1) !important; }
-
-        /* URL Input Area */
-        .url-input-box { position: relative; }
-        .url-preview-mini { position: absolute; right: 8px; top: 8px; bottom: 8px; width: 60px; border-radius: 8px; overflow: hidden; }
-        .url-preview-mini img { width: 100%; height: 100%; object-fit: cover; }
-        .clear-url { position: absolute; inset: 0; background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; }
-        .url-preview-mini:hover .clear-url { opacity: 1; }
-
-        .url-add-group { display: flex; gap: 10px; }
-        .add-btn { background: #0f172a; color: #fff; width: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-        .gallery-link-previews { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 15px; }
-        .gallery-link-item { position: relative; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
-        .gallery-link-item img { width: 100%; height: 100%; object-fit: cover; }
-        .remove-link { position: absolute; top: 4px; right: 4px; background: rgba(239, 68, 68, 0.9); color: #fff; border-radius: 4px; padding: 2px; }
-
-        /* Tags */
-        .modern-tags-input { border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 10px; background: #fcfdfe; }
-        .tags-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-        .chip { background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        .chip button { color: #94a3b8; font-size: 1.2rem; }
-        .modern-tags-input input { border: none !important; padding: 5px !important; background: transparent !important; box-shadow: none !important; min-height: auto !important; }
-
-        /* Toggle */
-        .toggle-v2 { display: flex; gap: 5px; background: #f1f5f9; padding: 4px; border-radius: 10px; width: fit-content; }
-        .toggle-v2 button { padding: 8px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; transition: 0.3s; color: #64748b; }
-        .toggle-v2 button.active { background: #fff; color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-
-        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .checkbox-label input { width: 18px; height: 18px; min-height: auto !important; }
-
-        /* Footer */
-        .editor-footer { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 40px; border-top: 1px solid #f1f5f9; }
-        .btn-outline-admin { padding: 14px 28px; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #fff; font-weight: 700; color: #64748b; }
-        .btn-outline-admin:hover { border-color: #0f172a; color: #0f172a; }
-        .btn-next-admin { padding: 14px 32px; border-radius: 12px; background: #0f172a; color: #fff; font-weight: 700; }
-        .btn-finish-admin { padding: 14px 32px; border-radius: 12px; background: #E8A020; color: #fff; font-weight: 700; box-shadow: 0 10px 20px rgba(232, 160, 32, 0.2); }
-
-        /* Preview Sidebar */
-        .preview-sticky { position: sticky; top: 120px; }
-        .preview-header { font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-        .preview-card-v2 { background: #fff; border-radius: 24px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .preview-media { height: 240px; background: #f8fafc; position: relative; }
-        .preview-media img { width: 100%; height: 100%; object-fit: cover; }
-        .media-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #cbd5e1; gap: 10px; }
-        .p-badge { position: absolute; top: 15px; left: 15px; background: #E8A020; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; }
-        .preview-info { padding: 25px; }
-        .p-cat { font-size: 0.65rem; font-weight: 900; color: #E8A020; text-transform: uppercase; letter-spacing: 1px; }
-        .p-title { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 10px 0; line-height: 1.2; }
-        .p-loc { font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 6px; margin-bottom: 20px; }
-        .p-stats { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 15px; }
-        .p-price { font-size: 1.6rem; font-weight: 900; color: #0f172a; }
-        .p-days { font-size: 0.85rem; font-weight: 700; color: #94a3b8; }
-        .preview-tips { margin-top: 20px; font-size: 0.8rem; color: #64748b; font-style: italic; display: flex; align-items: center; gap: 8px; padding: 0 10px; }
-
-        @media (max-width: 1200px) { .admin-layout { grid-template-columns: 1fr; } .preview-column { display: none; } }
-        @media (max-width: 768px) { .editor-card { padding: 30px; } .form-grid { grid-template-columns: 1fr !important; } .step-label { display: none; } }
       `}</style>
-      <Footer />
-    </main>
-  );
-}
-
-export default function UploadTrip() {
-  return (
-    <Suspense fallback={<div>Loading Wizard...</div>}>
-      <UploadTripContent />
-    </Suspense>
+    </div>
   );
 }
