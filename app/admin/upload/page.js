@@ -178,7 +178,7 @@ export default function UploadPage({ params }) {
                   <option value="Indian Escapes">Indian Escapes</option>
                   <option value="Overseas Adventures">Overseas Adventures</option>
                   <option value="Divine Destinations">Divine Destinations</option>
-                </select>
+                </FocusSelect>
               </FormField>
               <FormField label="Destination" required>
                 <FocusInput name="destination" value={formData.destination} onChange={handleChange} placeholder="e.g. Alleppey, Kerala" />
